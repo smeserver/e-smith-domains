@@ -1,0 +1,17 @@
+Index: e-smith-domains/e-smith-domains.spec
+diff -u e-smith-domains/root/etc/e-smith/web/functions/domains:1.6 e-smith-domains/root/etc/e-smith/web/functions/domains:1.7
+--- e-smith-domains/root/etc/e-smith/web/functions/domains:1.6	Tue Jul 13 15:17:38 2004
++++ e-smith-domains/root/etc/e-smith/web/functions/domains	Tue Jul 13 15:31:48 2004
+@@ -148,6 +148,12 @@
+         print $q->div ( { -class => $class }, $msg );
+         print $q->hr;
+     }
++    my $bsconsole_run = $conf->get_prop('bootstrap-console', 'Run') || 'no';
++    print $q->div({-class => 'error'},
++        $q->h5('Warning: a reboot is required before proceeding!
++        Failure to reboot now may leave your system in an unknown
++        state!'))
++        if $bsconsole_run eq 'yes';
+ 
+     #------------------------------------------------------------
+     # Look up domains and domain descriptions

@@ -1,0 +1,2134 @@
+Index: e-smith-domains/e-smith-domains.spec
+diff -u e-smith-domains/root/etc/e-smith/db/domains/migrate/10sanitise-db:1.1 e-smith-domains/root/etc/e-smith/db/domains/migrate/10sanitise-db:1.2
+--- e-smith-domains/root/etc/e-smith/db/domains/migrate/10sanitise-db:1.1	Thu Jun 12 17:56:39 2003
++++ e-smith-domains/root/etc/e-smith/db/domains/migrate/10sanitise-db	Tue Jul 13 15:17:38 2004
+@@ -1,22 +1,24 @@
+ {
+-    foreach my $domain ($DB->get_all)
++    # vim: ft=perl ts=4 sw=4 et:
++    foreach my $domain ( $DB->get_all )
+     {
+-	my $lc_key = lc($domain->key);
++        my $lc_key = lc( $domain->key );
+ 
+-	next if ( $lc_key eq $domain->key );
++        next if ( $lc_key eq $domain->key );
+ 
+-	my $rec = $DB->get($lc_key);
++        my $rec = $DB->get($lc_key);
+ 
+-	if ($rec)
+-	{
+-	    warn "DomainsDB: " . $domain->key . 
+-		    " NOT migrated as $lc_key exists\n";
+-	    next;
+-	}
++        if ($rec)
++        {
++            warn "DomainsDB: "
++              . $domain->key
++              . " NOT migrated as $lc_key exists\n";
++            next;
++        }
+ 
+-	$rec = $DB->new_record($lc_key);
+-	$rec->merge_props($domain->props);
++        $rec = $DB->new_record($lc_key);
++        $rec->merge_props( $domain->props );
+ 
+-	$domain->delete;
++        $domain->delete;
+     }
+ }
+Index: e-smith-domains/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains
+diff -u e-smith-domains/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains:1.3 e-smith-domains/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains:1.4
+--- e-smith-domains/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains:1.3	Tue Sep 23 11:42:30 2003
++++ e-smith-domains/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains	Tue Jul 13 15:17:38 2004
+@@ -1,217 +1,217 @@
+-<!-- vim: ft=xml ts=8 sw=4 noet:
++<!-- vim: ft=xml ts=4 sw=4 et:
+ -->
+ <lexicon lang="en-us">
+     <entry>
+-	<base>FORM_TITLE</base>
+-	<trans>
+-	    Manage domains
+-	</trans>
++        <base>FORM_TITLE</base>
++        <trans>
++            Manage domains
++        </trans>
+     </entry>
+     <entry>
+-	<base>OPERATION_STATUS_REPORT</base>
+-	<trans>
+-	    Operation status report
+-	</trans>
++        <base>OPERATION_STATUS_REPORT</base>
++        <trans>
++            Operation status report
++        </trans>
+     </entry>
+     <entry>
+-	<base>FORM_DESCRIPTION</base>
+-	<trans>
+-	    <![CDATA[
+-	    <p>When you create a virtual domain, your server will be able to
+-		receive e-mail for that domain and will also be able to host a
+-		web site for that domain.</p>
+-	    <p><a class="button-like" href="domains?state=create">Add virtual
+-		    domain</a></p>
+-	    ]]>
+-	</trans>
++        <base>FORM_DESCRIPTION</base>
++        <trans>
++            <![CDATA[
++            <p>When you create a virtual domain, your server will be able to
++                receive e-mail for that domain and will also be able to host a
++                web site for that domain.</p>
++            <p><a class="button-like" href="domains?state=create">Add virtual
++                    domain</a></p>
++            ]]>
++        </trans>
+     </entry>
+     <entry>
+-	<base>NO_VIRTUAL_DOMAINS</base>
+-	<trans> 
+-	    There are no virtual domains in the system.
+-	</trans>
++        <base>NO_VIRTUAL_DOMAINS</base>
++        <trans> 
++            There are no virtual domains in the system.
++        </trans>
+     </entry>
+     <entry>
+-	<base>CURRENT_LIST_OF_DOMAINS</base>
+-	<trans>
+-	    Current list of domains
+-	</trans>
++        <base>CURRENT_LIST_OF_DOMAINS</base>
++        <trans>
++            Current list of domains
++        </trans>
+     </entry>
+     <entry>
+-	<base>DOMAIN</base>
+-	<trans>
+-	    Domain
+-	</trans>
++        <base>DOMAIN</base>
++        <trans>
++            Domain
++        </trans>
+     </entry>
+     <entry>
+-	<base>DESCRIPTION</base>
+-	<trans>
+-	    Description
+-	</trans>
++        <base>DESCRIPTION</base>
++        <trans>
++            Description
++        </trans>
+     </entry>
+     <entry>
+-	<base>PRIMARY_SITE</base>
+-	<trans>
+-	    primary site
+-	</trans>
++        <base>PRIMARY_SITE</base>
++        <trans>
++            primary site
++        </trans>
+     </entry>
+     <entry>
+-	<base>CONTENT</base>
+-	<trans>
+-	    {$content} i-bay
+-	</trans>
++        <base>CONTENT</base>
++        <trans>
++            {$content} i-bay
++        </trans>
+     </entry>
+     <entry>
+-	<base>MODIFY</base>
+-	<trans>Modify</trans>
++        <base>MODIFY</base>
++        <trans>Modify</trans>
+     </entry>
+     <entry>
+         <base>SAVE</base>
+         <trans>Save</trans>
+     </entry>
+     <entry>
+-	<base>REMOVE</base>
+-	<trans>Remove</trans>
++        <base>REMOVE</base>
++        <trans>Remove</trans>
+     </entry>
+     <entry>
+-	<base>CREATE_TITLE</base>
+-	<trans>
+-	    Create a new virtual domain
+-	</trans>
++        <base>CREATE_TITLE</base>
++        <trans>
++            Create a new virtual domain
++        </trans>
+     </entry>
+     <entry>
+-	<base>DOMAIN_NAME_LABEL</base>
+-	<trans>
+-	    Domain name
+-	</trans>
++        <base>DOMAIN_NAME_LABEL</base>
++        <trans>
++            Domain name
++        </trans>
+     </entry>
+     <entry>
+-	<base>DESCRIPTION_LABEL</base>
+-	<trans>
+-	    Brief description
+-	</trans>
++        <base>DESCRIPTION_LABEL</base>
++        <trans>
++            Brief description
++        </trans>
+     </entry>
+     <entry>
+-	<base>CONTENT_FIELD_DESCRIPTION</base>
+-	<trans>
+-	    For the web site, you may choose your primary web site or any
+-	    i-bay as the content.
+-	</trans>
++        <base>CONTENT_FIELD_DESCRIPTION</base>
++        <trans>
++            For the web site, you may choose your primary web site or any
++            i-bay as the content.
++        </trans>
+     </entry>
+     <entry>
+-	<base>CONTENT_LABEL</base>
+-	<trans>
+-	    Content
+-	</trans>
++        <base>CONTENT_LABEL</base>
++        <trans>
++            Content
++        </trans>
+     </entry>
+     <entry>
+-	<base>CREATE</base>
+-	<trans>Add</trans>
++        <base>CREATE</base>
++        <trans>Add</trans>
+     </entry>
+     <entry>
+-	<base>DOMAIN_NAME_VALIDATION_ERROR</base>
+-	<trans>
+-	    Error: unexpected or missing characters in domain name
+-	    {$domainName}.  The domain name should contain one or more
+-	    letters, numbers, periods and minus signs.  Did not create new
+-	    domain.
+-	</trans>
++        <base>DOMAIN_NAME_VALIDATION_ERROR</base>
++        <trans>
++            Error: unexpected or missing characters in domain name
++            {$domainName}.  The domain name should contain one or more
++            letters, numbers, periods and minus signs.  Did not create new
++            domain.
++        </trans>
+     </entry>
+     <entry>
+-	<base>DOMAIN_DESCRIPTION_VALIDATION_ERROR</base>
+-	<trans>
+-	    Error: unexpected or missing characters in domain description
+-	    {$domainDesc}.  Did not create new domain.
+-	</trans>
++        <base>DOMAIN_DESCRIPTION_VALIDATION_ERROR</base>
++        <trans>
++            Error: unexpected or missing characters in domain description
++            {$domainDesc}.  Did not create new domain.
++        </trans>
+     </entry>
+     <entry>
+-	<base>DOMAIN_IN_USE_ERROR</base>
+-	<trans>
+-	    Error: domain {$domainName} is already in use.  Did not create
+-	    new domain.
+-	</trans>
++        <base>DOMAIN_IN_USE_ERROR</base>
++        <trans>
++            Error: domain {$domainName} is already in use.  Did not create
++            new domain.
++        </trans>
+     </entry>
+     <entry>
+-	<base>SYSTEM_DOMAIN_ERROR</base>
+-	<trans>
+-	    Error: domain {$domainName} is your system domain name.  You
+-	    cannot have a virtual domain with the same name.  Did not create
+-	    new domain.
+-	</trans>
++        <base>SYSTEM_DOMAIN_ERROR</base>
++        <trans>
++            Error: domain {$domainName} is your system domain name.  You
++            cannot have a virtual domain with the same name.  Did not create
++            new domain.
++        </trans>
+     </entry>
+     <entry>
+-	<base>SUCCESSFULLY_CREATED</base>
+-	<trans>
+-	    Successfully created virtual domain {$domainName}.  Your web
+-	    server is now being restarted.  The links on this page will be
+-	    inactive until the web server restart is complete.
+-	</trans>
++        <base>SUCCESSFULLY_CREATED</base>
++        <trans>
++            Successfully created virtual domain {$domainName}.  Your web
++            server is now being restarted.  The links on this page will be
++            inactive until the web server restart is complete.
++        </trans>
+     </entry>
+     <entry>
+-	<base>ACTION</base>
+-	<trans>Action</trans>
++        <base>ACTION</base>
++        <trans>Action</trans>
+     </entry>
+     <entry>
+-	<base>MODIFY_TITLE</base>
+-	<trans>
+-	    Modify virtual domain
+-	</trans>
++        <base>MODIFY_TITLE</base>
++        <trans>
++            Modify virtual domain
++        </trans>
+     </entry>
+     <entry>
+-	<base>NONEXISTENT_DOMAIN_ERROR</base>
+-	<trans>
+-	    Error: {$domainName} is not an existing domain.
+-	</trans>
++        <base>NONEXISTENT_DOMAIN_ERROR</base>
++        <trans>
++            Error: {$domainName} is not an existing domain.
++        </trans>
+     </entry>
+     <entry>
+-	<base>SUCCESSFULLY_MODIFIED</base>
+-	<trans>
+-	    Successfully modified virtual domain {$domainName}.  Your web
+-	    server is now being restarted.  The links on this page will be
+-	    inactive until the web server restart is complete.
+-	</trans>
++        <base>SUCCESSFULLY_MODIFIED</base>
++        <trans>
++            Successfully modified virtual domain {$domainName}.  Your web
++            server is now being restarted.  The links on this page will be
++            inactive until the web server restart is complete.
++        </trans>
+     </entry>
+     <entry>
+-	<base>REMOVE_TITLE</base>
+-	<trans>
+-	    Remove virtual domain
+-	</trans>
++        <base>REMOVE_TITLE</base>
++        <trans>
++            Remove virtual domain
++        </trans>
+     </entry>
+     <entry>
+-	<base>REMOVE_DESCRIPTION</base>
+-	<trans>
+-	    <![CDATA[
+-	    <p>
+-		You are about to remove the virtual domain {$domain}
+-		({$domainDesc}).  
+-	    </p>
+-	    <p>
+-		<b>Are you sure you wish to remove this domain?</b>
+-	    </p>
+-	    ]]>
+-	</trans>
++        <base>REMOVE_DESCRIPTION</base>
++        <trans>
++            <![CDATA[
++            <p>
++                You are about to remove the virtual domain {$domain}
++                ({$domainDesc}).  
++            </p>
++            <p>
++                <b>Are you sure you wish to remove this domain?</b>
++            </p>
++            ]]>
++        </trans>
+     </entry>
+     <entry>
+-	<base>ERROR_WHILE_REMOVING_DOMAIN</base>
+-	<trans>
+-	    Error: internal failure while removing virtual domain
+-	    {$domain}.
+-	</trans>
++        <base>ERROR_WHILE_REMOVING_DOMAIN</base>
++        <trans>
++            Error: internal failure while removing virtual domain
++            {$domain}.
++        </trans>
+     </entry>
+     <entry>
+-	<base>SUCCESSFULLY_DELETED</base>
+-	<trans>
+-	    Successfully deleted virtual domain {$domain}.  Your web server
+-	    is now being restarted.  The links on this page will be inactive
+-	    until the web server restart is complete.
+-	</trans>
++        <base>SUCCESSFULLY_DELETED</base>
++        <trans>
++            Successfully deleted virtual domain {$domain}.  Your web server
++            is now being restarted.  The links on this page will be inactive
++            until the web server restart is complete.
++        </trans>
+     </entry>
+     <entry>
+-	<base>Configuration</base>
+-	<trans>Configuration</trans>
++        <base>Configuration</base>
++        <trans>Configuration</trans>
+     </entry>
+     <entry>
+-	<base>Domains</base>
+-	<trans>Domains</trans>
++        <base>Domains</base>
++        <trans>Domains</trans>
+     </entry>
+ </lexicon>
+Index: e-smith-domains/root/etc/e-smith/locale/es/etc/e-smith/web/functions/domains
+diff -u e-smith-domains/root/etc/e-smith/locale/es/etc/e-smith/web/functions/domains:1.3 e-smith-domains/root/etc/e-smith/locale/es/etc/e-smith/web/functions/domains:1.4
+--- e-smith-domains/root/etc/e-smith/locale/es/etc/e-smith/web/functions/domains:1.3	Tue Sep 23 11:42:30 2003
++++ e-smith-domains/root/etc/e-smith/locale/es/etc/e-smith/web/functions/domains	Tue Jul 13 15:17:38 2004
+@@ -1,200 +1,212 @@
+-<!-- vim: ft=xml ts=8 sw=4 noet:
+--->
++<!-- vim: ft=xml ts=4 sw=4 et: -->
+ <lexicon lang="es">
+     <entry>
+-	<base>FORM_TITLE</base>
+-	<trans>
+-	    Administrar dominios
+-	</trans>
++        <base>FORM_TITLE</base>
++        <trans>
++            Administrar dominios
++        </trans>
+     </entry>
+     <entry>
+-	<base>OPERATION_STATUS_REPORT</base>
+-	<trans>
+-	    Informe del estado de la operación
+-	</trans>
++        <base>OPERATION_STATUS_REPORT</base>
++        <trans>
++            Informe del estado de la operación
++        </trans>
+     </entry>
+     <entry>
+-	<base>FORM_DESCRIPTION</base>
+-	<trans>
+-	    <![CDATA[
+-	    <p>Cuando crea un dominio virtual, el servidor queda habilitado para recibir correo electrónico para ese dominio y también puede alojar un sitio Web para ese dominio.</p>
+-	    <p><a class="button-like" href="domains?state=create">Agregar
+-		    dominio virtual</a></p>
+-	    ]]>
+-	</trans>
++        <base>FORM_DESCRIPTION</base>
++        <trans>
++            <![CDATA[
++            <p>Cuando crea un dominio virtual, el servidor queda habilitado
++                para recibir correo electrónico para ese dominio y también
++                puede alojar un sitio Web para ese dominio.</p>
++            <p><a class="button-like" href="domains?state=create">Agregar
++                    dominio virtual</a></p>
++            ]]>
++        </trans>
+     </entry>
+     <entry>
+-	<base>NO_VIRTUAL_DOMAINS</base>
+-	<trans> 
+-	    No hay dominios virtuales en el sistema.
+-	</trans>
++        <base>NO_VIRTUAL_DOMAINS</base>
++        <trans> 
++            No hay dominios virtuales en el sistema.
++        </trans>
+     </entry>
+     <entry>
+-	<base>CURRENT_LIST_OF_DOMAINS</base>
+-	<trans>
+-	    Lista actual de dominios
+-	</trans>
++        <base>CURRENT_LIST_OF_DOMAINS</base>
++        <trans>
++            Lista actual de dominios
++        </trans>
+     </entry>
+     <entry>
+-	<base>DOMAIN</base>
+-	<trans>
+-	    Dominio
+-	</trans>
++        <base>DOMAIN</base>
++        <trans>
++            Dominio
++        </trans>
+     </entry>
+     <entry>
+-	<base>DESCRIPTION</base>
+-	<trans>
+-	    Descripción
+-	</trans>
++        <base>DESCRIPTION</base>
++        <trans>
++            Descripción
++        </trans>
+     </entry>
+     <entry>
+-	<base>PRIMARY_SITE</base>
+-	<trans>
+-	    sitio primario
+-	</trans>
++        <base>PRIMARY_SITE</base>
++        <trans>
++            sitio primario
++        </trans>
+     </entry>
+     <entry>
+-	<base>CONTENT</base>
+-	<trans>
+-	    i-bay {$content}
+-	</trans>
++        <base>CONTENT</base>
++        <trans>
++            i-bay {$content}
++        </trans>
+     </entry>
+     <entry>
+-	<base>MODIFY</base>
+-	<trans>Modificar</trans>
++        <base>MODIFY</base>
++        <trans>Modificar</trans>
+     </entry>
+     <entry>
+         <base>SAVE</base>
+         <trans>Guardar</trans>
+     </entry>
+     <entry>
+-	<base>REMOVE</base>
+-	<trans>Eliminar</trans>
++        <base>REMOVE</base>
++        <trans>Eliminar</trans>
+     </entry>
+     <entry>
+-	<base>CREATE_TITLE</base>
+-	<trans>
+-	    Crear un nuevo dominio virtual
+-	</trans>
++        <base>CREATE_TITLE</base>
++        <trans>
++            Crear un nuevo dominio virtual
++        </trans>
+     </entry>
+     <entry>
+-	<base>DOMAIN_NAME_LABEL</base>
+-	<trans>
+-	    Nombre del dominio
+-	</trans>
++        <base>DOMAIN_NAME_LABEL</base>
++        <trans>
++            Nombre del dominio
++        </trans>
+     </entry>
+     <entry>
+-	<base>DESCRIPTION_LABEL</base>
+-	<trans>
+-	    Breve descripción
+-	</trans>
++        <base>DESCRIPTION_LABEL</base>
++        <trans>
++            Breve descripción
++        </trans>
+     </entry>
+     <entry>
+-	<base>CONTENT_FIELD_DESCRIPTION</base>
+-	<trans>
+-	    Para el sitio Web, puede escoger el sitio Web primario o cualquier i-bay como contenido.
+-	</trans>
++        <base>CONTENT_FIELD_DESCRIPTION</base>
++        <trans>
++            Para el sitio Web, puede escoger el sitio Web primario o cualquier
++            i-bay como contenido.
++        </trans>
+     </entry>
+     <entry>
+-	<base>CONTENT_LABEL</base>
+-	<trans>
+-	    Contenido
+-	</trans>
++        <base>CONTENT_LABEL</base>
++        <trans>
++            Contenido
++        </trans>
+     </entry>
+     <entry>
+-	<base>CREATE</base>
+-	<trans>Agregar</trans>
++        <base>CREATE</base>
++        <trans>Agregar</trans>
+     </entry>
+     <entry>
+-	<base>DOMAIN_NAME_VALIDATION_ERROR</base>
+-	<trans>
+-	    Error: caracteres erróneos o faltantes en el nombre del dominio {$domainName}.  El nombre del dominio debe contener una o más letras, números, puntos y signos menos.  No se creó un nuevo dominio.
+-	</trans>
++        <base>DOMAIN_NAME_VALIDATION_ERROR</base>
++        <trans>
++            Error: caracteres erróneos o faltantes en el nombre del dominio
++            {$domainName}.  El nombre del dominio debe contener una o más
++            letras, números, puntos y signos menos.  No se creó un nuevo
++            dominio.
++        </trans>
+     </entry>
+     <entry>
+-	<base>DOMAIN_DESCRIPTION_VALIDATION_ERROR</base>
+-	<trans>
+-	    Error: caracteres erróneos o faltantes en la descripción del dominio {$domainDesc}.  No se creó un nuevo dominio.
+-	</trans>
++        <base>DOMAIN_DESCRIPTION_VALIDATION_ERROR</base>
++        <trans>
++            Error: caracteres erróneos o faltantes en la descripción del
++            dominio {$domainDesc}.  No se creó un nuevo dominio.
++        </trans>
+     </entry>
+     <entry>
+-	<base>DOMAIN_IN_USE_ERROR</base>
+-	<trans>
+-	    Error: el dominio {$domainName} ya está en uso.  No se creó un nuevo dominio.
+-	</trans>
++        <base>DOMAIN_IN_USE_ERROR</base>
++        <trans>
++            Error: el dominio {$domainName} ya está en uso.  No se creó un
++            nuevo dominio.
++        </trans>
+     </entry>
+     <entry>
+-	<base>SYSTEM_DOMAIN_ERROR</base>
+-	<trans>
+-	    Error: el dominio {$domainName} es el nombre del dominio de su sistema.  No puede tener un dominio virtual con el mismo nombre.  No se creó un nuevo dominio.
+-	</trans>
++        <base>SYSTEM_DOMAIN_ERROR</base>
++        <trans>
++            Error: el dominio {$domainName} es el nombre del dominio de su
++            sistema.  No puede tener un dominio virtual con el mismo nombre.
++            No se creó un nuevo dominio.
++        </trans>
+     </entry>
+     <entry>
+-	<base>SUCCESSFULLY_CREATED</base>
+-	<trans>
+-	    Se creó con éxito el dominio virtual {$domainName}.  Ahora se está reiniciando el servidor Web.  Los vínculos en esta página estarán inactivos hasta que se complete el reinicio del servidor Web.
+-	</trans>
++        <base>SUCCESSFULLY_CREATED</base>
++        <trans>
++            Se creó con éxito el dominio virtual {$domainName}.  Ahora se está
++            reiniciando el servidor Web.  Los vínculos en esta página estarán
++            inactivos hasta que se complete el reinicio del servidor Web.
++        </trans>
+     </entry>
+     <entry>
+-	<base>ACTION</base>
+-	<trans>Acción</trans>
++        <base>ACTION</base>
++        <trans>Acción</trans>
+     </entry>
+     <entry>
+-	<base>MODIFY_TITLE</base>
+-	<trans>
+-	    Modificar dominio virtual
+-	</trans>
++        <base>MODIFY_TITLE</base>
++        <trans>
++            Modificar dominio virtual
++        </trans>
+     </entry>
+     <entry>
+-	<base>NONEXISTENT_DOMAIN_ERROR</base>
+-	<trans>
+-	    Error: {$domainName} no es un dominio existente.
+-	</trans>
++        <base>NONEXISTENT_DOMAIN_ERROR</base>
++        <trans>
++            Error: {$domainName} no es un dominio existente.
++        </trans>
+     </entry>
+     <entry>
+-	<base>SUCCESSFULLY_MODIFIED</base>
+-	<trans>
+-	    Se modificó con éxito el dominio virtual {$domainName}.  Ahora se está reiniciando el servidor Web.  Los vínculos en esta página estarán inactivos hasta que se complete el reinicio del servidor Web.
+-	</trans>
++        <base>SUCCESSFULLY_MODIFIED</base>
++        <trans>
++            Se modificó con éxito el dominio virtual {$domainName}.  Ahora se
++            está reiniciando el servidor Web.  Los vínculos en esta página
++            estarán inactivos hasta que se complete el reinicio del servidor
++            Web.
++        </trans>
+     </entry>
+     <entry>
+-	<base>REMOVE_TITLE</base>
+-	<trans>
+-	    Eliminar dominio virtual
+-	</trans>
++        <base>REMOVE_TITLE</base>
++        <trans>
++            Eliminar dominio virtual
++        </trans>
+     </entry>
+     <entry>
+-	<base>REMOVE_DESCRIPTION</base>
+-	<trans>
+-	    <![CDATA[
+-	    <p>
+-		Está a punto de eliminar el dominio virtual {$domain} ({$domainDesc}).  
+-	    </p>
+-	    <p>
+-		<b>¿Está seguro de que desea eliminar este dominio?</b>
+-	    </p>
+-	    ]]>
+-	</trans>
++        <base>REMOVE_DESCRIPTION</base>
++        <trans>
++            <![CDATA[
++            <p> Está a punto de eliminar el dominio virtual {$domain}
++                ({$domainDesc}).  </p>
++            <p> <b>¿Está seguro de que desea eliminar este dominio?</b> </p>
++            ]]>
++        </trans>
+     </entry>
+     <entry>
+-	<base>ERROR_WHILE_REMOVING_DOMAIN</base>
+-	<trans>
+-	    Error: falla interna al eliminar el dominio virtual {$domain}.
+-	</trans>
++        <base>ERROR_WHILE_REMOVING_DOMAIN</base>
++        <trans>
++            Error: falla interna al eliminar el dominio virtual {$domain}.
++        </trans>
+     </entry>
+     <entry>
+-	<base>SUCCESSFULLY_DELETED</base>
+-	<trans>
+-	    Se eliminó con éxito el dominio virtual {$domain}.  Ahora se está reiniciando el servidor Web.  Los vínculos en esta página estarán inactivos hasta que se complete el reinicio del servidor Web.
+-	</trans>
++        <base>SUCCESSFULLY_DELETED</base>
++        <trans>
++            Se eliminó con éxito el dominio virtual {$domain}.  Ahora se está
++            reiniciando el servidor Web.  Los vínculos en esta página estarán
++            inactivos hasta que se complete el reinicio del servidor Web.
++        </trans>
+     </entry>
+     <entry>
+-	<base>Configuration</base>
+-	<trans>Configuración</trans>
++        <base>Configuration</base>
++        <trans>Configuración</trans>
+     </entry>
+     <entry>
+-	<base>Domains</base>
+-	<trans>Dominios</trans>
++        <base>Domains</base>
++        <trans>Dominios</trans>
+     </entry>
+ </lexicon>
+-
+Index: e-smith-domains/root/etc/e-smith/locale/fr/etc/e-smith/web/functions/domains
+diff -u e-smith-domains/root/etc/e-smith/locale/fr/etc/e-smith/web/functions/domains:1.2 e-smith-domains/root/etc/e-smith/locale/fr/etc/e-smith/web/functions/domains:1.3
+--- e-smith-domains/root/etc/e-smith/locale/fr/etc/e-smith/web/functions/domains:1.2	Tue Sep 23 11:42:30 2003
++++ e-smith-domains/root/etc/e-smith/locale/fr/etc/e-smith/web/functions/domains	Tue Jul 13 15:17:38 2004
+@@ -1,68 +1,68 @@
+-<!-- vim: ft=xml ts=8 sw=4 noet:
++<!-- vim: ft=xml ts=4 sw=4 et:
+ -->
+ <lexicon lang="fr"> 
+     <entry>
+-	<base>FORM_TITLE</base> 
+-	<trans>
+-	    Gérer les domaines
+-	</trans> 
++        <base>FORM_TITLE</base> 
++        <trans>
++            Gérer les domaines
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>FORM_DESCRIPTION</base> 
+-	<trans>
+-	    <![CDATA[
+-	    <p>Si vous créez un domaine virtuel, le serveur pourra recevoir du
+-		courrier électronique pour ce domaine et héberger un site Web
+-		pour ce domaine.</p>
+-	    <p><a class="button-like" href="domains?state=create">Ajouter un
+-		    domaine virtuel</a></p> 
+-	    ]]> 
+-	</trans> 
++        <base>FORM_DESCRIPTION</base> 
++        <trans>
++            <![CDATA[
++            <p>Si vous créez un domaine virtuel, le serveur pourra recevoir du
++                courrier électronique pour ce domaine et héberger un site Web
++                pour ce domaine.</p>
++            <p><a class="button-like" href="domains?state=create">Ajouter un
++                    domaine virtuel</a></p> 
++            ]]> 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>NO_VIRTUAL_DOMAINS</base> 
+-	<trans> Il n'y a pas de domaines virtuels dans le système. 
+-	</trans> 
++        <base>NO_VIRTUAL_DOMAINS</base> 
++        <trans> Il n'y a pas de domaines virtuels dans le système. 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>CURRENT_LIST_OF_DOMAINS</base> 
+-	<trans> 
+-	    Liste actuelle des domaines
+-	</trans> 
++        <base>CURRENT_LIST_OF_DOMAINS</base> 
++        <trans> 
++            Liste actuelle des domaines
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>DOMAIN</base> 
+-	<trans> 
+-	    Domaine 
+-	</trans> 
++        <base>DOMAIN</base> 
++        <trans> 
++            Domaine 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>DESCRIPTION</base> 
+-	<trans> 
+-	    Description 
+-	</trans> 
++        <base>DESCRIPTION</base> 
++        <trans> 
++            Description 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>CONTENT</base> 
+-	<trans> 
+-	    Contenu 
+-	</trans> 
++        <base>CONTENT</base> 
++        <trans> 
++            Contenu 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>PRIMARY_SITE</base> 
+-	<trans> site principal </trans> 
++        <base>PRIMARY_SITE</base> 
++        <trans> site principal </trans> 
+     </entry> 
+     <entry>
+-	<base>CONTENT</base> 
+-	<trans> 
+-	    {$content} info-baie 
+-	</trans> 
++        <base>CONTENT</base> 
++        <trans> 
++            {$content} info-baie 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>MODIFY</base> 
+-	<trans> 
+-	    Modifier 
+-	</trans> 
++        <base>MODIFY</base> 
++        <trans> 
++            Modifier 
++        </trans> 
+     </entry>
+     <entry>
+         <base>SAVE</base>
+@@ -71,152 +71,152 @@
+         </trans> 
+     </entry> 
+     <entry>
+-	<base>REMOVE</base> 
+-	<trans> 
+-	    Supprimer 
+-	</trans> 
++        <base>REMOVE</base> 
++        <trans> 
++            Supprimer 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>CREATE_TITLE</base> 
+-	<trans> 
+-	    Créer un domaine virtuel 
+-	</trans> 
++        <base>CREATE_TITLE</base> 
++        <trans> 
++            Créer un domaine virtuel 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>DOMAIN_NAME_LABEL</base> 
+-	<trans> 
+-	    Nom de domaine 
+-	</trans> 
++        <base>DOMAIN_NAME_LABEL</base> 
++        <trans> 
++            Nom de domaine 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>DESCRIPTION_LABEL</base> 
+-	<trans> 
+-	    Brève description 
+-	</trans> 
++        <base>DESCRIPTION_LABEL</base> 
++        <trans> 
++            Brève description 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>CONTENT_FIELD_DESCRIPTION</base> 
+-	<trans> 
+-	    Pour le site Web, vous pouvez choisir votre site principal 
+-	    ou toute info-baie comme contenu. 
+-	</trans> 
++        <base>CONTENT_FIELD_DESCRIPTION</base> 
++        <trans> 
++            Pour le site Web, vous pouvez choisir votre site principal 
++            ou toute info-baie comme contenu. 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>CONTENT_LABEL</base> 
+-	<trans> 
+-	    Contenu 
+-	</trans> 
++        <base>CONTENT_LABEL</base> 
++        <trans> 
++            Contenu 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>CREATE</base> 
+-	<trans>
+-	    Ajouter
+-	</trans> 
++        <base>CREATE</base> 
++        <trans>
++            Ajouter
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>DOMAIN_NAME_VALIDATION_ERROR</base> 
+-	<trans>
+-	    Erreur : caractères inattendus ou manquants dans le nom de domaine
+-	    {$domainName}.  Le nom de domaine doit contenir une lettre ou
+-	    plus, des chiffres, des points et des signes négatifs.  Nouveau
+-	    domaine non créé. 
+-	</trans> 
++        <base>DOMAIN_NAME_VALIDATION_ERROR</base> 
++        <trans>
++            Erreur : caractères inattendus ou manquants dans le nom de domaine
++            {$domainName}.  Le nom de domaine doit contenir une lettre ou
++            plus, des chiffres, des points et des signes négatifs.  Nouveau
++            domaine non créé. 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>DOMAIN_DESCRIPTION_VALIDATION_ERROR</base> 
+-	<trans>
+-	    Erreur : caractères inattendus ou manquants dans la description de 
+-	    domaine {$domainDesc}.  Domaine non créé. 
+-	</trans> 
++        <base>DOMAIN_DESCRIPTION_VALIDATION_ERROR</base> 
++        <trans>
++            Erreur : caractères inattendus ou manquants dans la description de 
++            domaine {$domainDesc}.  Domaine non créé. 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>DOMAIN_IN_USE_ERROR</base> 
+-	<trans>
+-	    Erreur : domaine {$domainName} déjà en cours d'utilisation.  
+-	    Domaine non créé. 
+-	</trans> 
++        <base>DOMAIN_IN_USE_ERROR</base> 
++        <trans>
++            Erreur : domaine {$domainName} déjà en cours d'utilisation.  
++            Domaine non créé. 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>SYSTEM_DOMAIN_ERROR</base> 
+-	<trans>
+-	    Erreur : domaine {$domainName} est le nom de domaine de votre
+-	    système.  Impossible d'avoir un domaine virtuel avec le même nom.
+-	    Domaine non créé. 
+-	</trans> 
++        <base>SYSTEM_DOMAIN_ERROR</base> 
++        <trans>
++            Erreur : domaine {$domainName} est le nom de domaine de votre
++            système.  Impossible d'avoir un domaine virtuel avec le même nom.
++            Domaine non créé. 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>SUCCESSFULLY_CREATED</base> 
+-	<trans> 
+-	    Domaine virtuel {$domainName} créé avec succès.  Votre serveur Web
+-	    redémarre.  Les liens de cette page seront désactivés jusqu'à la
+-	    fin du redémarrage du serveur Web. 
+-	</trans> 
++        <base>SUCCESSFULLY_CREATED</base> 
++        <trans> 
++            Domaine virtuel {$domainName} créé avec succès.  Votre serveur Web
++            redémarre.  Les liens de cette page seront désactivés jusqu'à la
++            fin du redémarrage du serveur Web. 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>MODIFY_TITLE</base> 
+-	<trans> 
+-	    Modifier le domaine virtuel 
+-	</trans> 
++        <base>MODIFY_TITLE</base> 
++        <trans> 
++            Modifier le domaine virtuel 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>NONEXISTENT_DOMAIN_ERROR</base> 
+-	<trans>
+-	    Erreur : domaine {$domainName} inexistant. 
+-	</trans> 
++        <base>NONEXISTENT_DOMAIN_ERROR</base> 
++        <trans>
++            Erreur : domaine {$domainName} inexistant. 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>SUCCESSFULLY_MODIFIED</base> 
+-	<trans> 
+-	    Domaine virtuel {$domainName} modifié avec succès.  Votre serveur
+-	    Web redémarre.  Les liens de cette page seront désactivés jusqu'à
+-	    la fin du redémarrage du serveur Web. 
+-	</trans> 
++        <base>SUCCESSFULLY_MODIFIED</base> 
++        <trans> 
++            Domaine virtuel {$domainName} modifié avec succès.  Votre serveur
++            Web redémarre.  Les liens de cette page seront désactivés jusqu'à
++            la fin du redémarrage du serveur Web. 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>REMOVE_TITLE</base> 
+-	<trans> 
+-	    Supprimer le domaine virtuel 
+-	</trans> 
++        <base>REMOVE_TITLE</base> 
++        <trans> 
++            Supprimer le domaine virtuel 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>REMOVE_DESCRIPTION</base> 
+-	<trans>
+-	    <![CDATA[
+-	    <p> 
+-		Vous êtes sur le point de supprimer le domaine virtuel
+-		{$domain} ({$domainDesc}).
+-	    </p>
+-	    <p> 
+-		<b>Voulez-vous vraiment supprimer ce domaine?</b>
+-	    </p> 
+-	    ]]> 
+-	</trans> 
++        <base>REMOVE_DESCRIPTION</base> 
++        <trans>
++            <![CDATA[
++            <p> 
++                Vous êtes sur le point de supprimer le domaine virtuel
++                {$domain} ({$domainDesc}).
++            </p>
++            <p> 
++                <b>Voulez-vous vraiment supprimer ce domaine?</b>
++            </p> 
++            ]]> 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>ERROR_WHILE_REMOVING_DOMAIN</base> 
+-	<trans>
+-	    Erreur : échec interne pendant la suppression du domaine virtuel 
+-	    {$domain}. 
+-	</trans> 
++        <base>ERROR_WHILE_REMOVING_DOMAIN</base> 
++        <trans>
++            Erreur : échec interne pendant la suppression du domaine virtuel 
++            {$domain}. 
++        </trans> 
+     </entry> 
+     <entry>
+-	<base>SUCCESSFULLY_DELETED</base> 
+-	<trans> 
+-	    Domaine virtuel {$domain} supprimé avec succès.  Votre serveur Web
+-	    redémarre.  Les liens de cette page seront désactivés jusqu'à la
+-	    fin du redémarrage du serveur Web. 
+-	</trans>
++        <base>SUCCESSFULLY_DELETED</base> 
++        <trans> 
++            Domaine virtuel {$domain} supprimé avec succès.  Votre serveur Web
++            redémarre.  Les liens de cette page seront désactivés jusqu'à la
++            fin du redémarrage du serveur Web. 
++        </trans>
+     </entry>
+     <entry>
+-	<base>Configuration</base>
+-	<trans>Configuration</trans>
++        <base>Configuration</base>
++        <trans>Configuration</trans>
+     </entry>
+     <entry>
+-	<base>Domains</base>
+-	<trans>Domaines</trans>
++        <base>Domains</base>
++        <trans>Domaines</trans>
+     </entry>
+     <entry>
+-	<base>ACTION</base>
+-	<trans>Action</trans>
++        <base>ACTION</base>
++        <trans>Action</trans>
+     </entry>
+ </lexicon>
+Index: e-smith-domains/root/etc/e-smith/web/functions/domains
+diff -u e-smith-domains/root/etc/e-smith/web/functions/domains:1.5 e-smith-domains/root/etc/e-smith/web/functions/domains:1.6
+--- e-smith-domains/root/etc/e-smith/web/functions/domains:1.5	Mon Oct 20 14:44:06 2003
++++ e-smith-domains/root/etc/e-smith/web/functions/domains	Tue Jul 13 15:17:38 2004
+@@ -1,6 +1,6 @@
+ #!/usr/bin/perl -wT
+ 
+-# vim: ts=8 sw=4 noet:
++# vim: ts=4 sw=4 et:
+ #----------------------------------------------------------------------
+ # heading     : Configuration
+ # description : Domains
+@@ -8,22 +8,22 @@
+ #----------------------------------------------------------------------
+ #----------------------------------------------------------------------
+ # copyright (C) 1999-2003 Mitel Networks Corporation
+-# 
++#
+ # This program is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation; either version 2 of the License, or
+ # (at your option) any later version.
+-# 		
++#
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+-# 		
++#
+ # You should have received a copy of the GNU General Public License
+ # along with this program; if not, write to the Free Software
+ # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+-# 
+-# Technical support for this program is available from Mitel Networks 
++#
++# Technical support for this program is available from Mitel Networks
+ # Please visit our web site www.mitel.com/sme/ for details.
+ #----------------------------------------------------------------------
+ 
+@@ -51,25 +51,26 @@
+ 
+ BEGIN
+ {
++
+     # Clear PATH and related environment variables so that calls to
+     # external programs do not cause results to be tainted. See
+     # "perlsec" manual page for details.
+ 
+-    $ENV {'PATH'} = '';
+-    $ENV {'SHELL'} = '/bin/bash';
+-    delete $ENV {'ENV'};
++    $ENV{'PATH'}  = '';
++    $ENV{'SHELL'} = '/bin/bash';
++    delete $ENV{'ENV'};
+ }
+ 
+-esmith::util::setRealToEffective ();
++esmith::util::setRealToEffective();
+ 
+-$CGI::POST_MAX=1024 * 100;  # max 100K posts
+-$CGI::DISABLE_UPLOADS = 1;  # no uploads
++$CGI::POST_MAX        = 1024 * 100;    # max 100K posts
++$CGI::DISABLE_UPLOADS = 1;             # no uploads
+ 
+ my $conf = esmith::ConfigDB->open_ro() or die "Unable to open configuration db";
+ my %conf = $conf->as_hash;
+ 
+ my $domainsdb = esmith::DomainsDB->open
+-    or die "Could not open Domains DB\n";
++  or die "Could not open Domains DB\n";
+ 
+ #------------------------------------------------------------
+ # examine state parameter and display the appropriate form
+@@ -77,47 +78,47 @@
+ 
+ my $q = new CGI;
+ 
+-if (! grep (/^state$/, $q->param))
++if ( !grep ( /^state$/, $q->param ) )
+ {
+-    showInitial ($q, '', 0);
++    showInitial( $q, '', 0 );
+ }
+ 
+-elsif ($q->param ('state') eq "create")
++elsif ( $q->param('state') eq "create" )
+ {
+-    createDomain ($q);
++    createDomain($q);
+ }
+ 
+-elsif ($q->param ('state') eq "performCreate")
++elsif ( $q->param('state') eq "performCreate" )
+ {
+-    performCreateDomain ($q);
++    performCreateDomain($q);
+ }
+ 
+-elsif ($q->param ('state') eq "modify")
++elsif ( $q->param('state') eq "modify" )
+ {
+-    modifyDomain ($q);
++    modifyDomain($q);
+ }
+ 
+-elsif ($q->param ('state') eq "performModify")
++elsif ( $q->param('state') eq "performModify" )
+ {
+-    performModifyDomain ($q);
++    performModifyDomain($q);
+ }
+ 
+-elsif ($q->param ('state') eq "delete")
++elsif ( $q->param('state') eq "delete" )
+ {
+-    deleteDomain ($q);
++    deleteDomain($q);
+ }
+ 
+-elsif ($q->param ('state') eq "performDelete")
++elsif ( $q->param('state') eq "performDelete" )
+ {
+-    performDeleteDomain ($q);
++    performDeleteDomain($q);
+ }
+ 
+ else
+ {
+-    esmith::cgi::genStateError ($q, \%conf);
++    esmith::cgi::genStateError( $q, \%conf );
+ }
+ 
+-exit (0);
++exit(0);
+ 
+ #------------------------------------------------------------
+ # subroutine to display initial form
+@@ -125,7 +126,7 @@
+ 
+ sub showInitial ($$$)
+ {
+-    my ($q, $msg, $error) = @_;
++    my ( $q, $msg, $error ) = @_;
+ 
+     #------------------------------------------------------------
+     # If there's a message, we just finished an operation so show the
+@@ -134,18 +135,18 @@
+     my $remove = $fm->localise('REMOVE');
+     my $modify = $fm->localise('MODIFY');
+ 
+-    if ($msg eq '')
++    if ( $msg eq '' )
+     {
+-	esmith::cgi::genHeaderNonCacheable ($q, \%conf,
+-	    $fm->localise('FORM_TITLE'));
++        esmith::cgi::genHeaderNonCacheable( $q, \%conf,
++            $fm->localise('FORM_TITLE') );
+     }
+     else
+     {
+-	esmith::cgi::genHeaderNonCacheable ($q, \%conf,
+-	    $fm->localise('OPERATION_STATUS_REPORT'));
+-	my $class = $error ? 'error' : 'success';
+-	print $q->div ({-class => $class},$msg);
+-	print $q->hr;
++        esmith::cgi::genHeaderNonCacheable( $q, \%conf,
++            $fm->localise('OPERATION_STATUS_REPORT') );
++        my $class = $error ? 'error' : 'success';
++        print $q->div ( { -class => $class }, $msg );
++        print $q->hr;
+     }
+ 
+     #------------------------------------------------------------
+@@ -154,153 +155,196 @@
+ 
+     my @virtualDomains = $domainsdb->domains;
+ 
+-    print $q->p ($fm->localise('FORM_DESCRIPTION'));
++    print $q->p ( $fm->localise('FORM_DESCRIPTION') );
+ 
+     my $numDomains = @virtualDomains;
+-    if ($numDomains == 0)
++    if ( $numDomains == 0 )
+     {
+-	print $q->h3($fm->localise('NO_VIRTUAL_DOMAINS'));
++        print $q->h3( $fm->localise('NO_VIRTUAL_DOMAINS') );
+     }
+     else
+     {
+-	print $q->h3($fm->localise('CURRENT_LIST_OF_DOMAINS'));
++        print $q->h3( $fm->localise('CURRENT_LIST_OF_DOMAINS') );
+ 
+-	print $q->start_table ({-CLASS => "sme-border"});
++        print $q->start_table ( { -CLASS => "sme-border" } );
+ 
+-	print $q->Tr (esmith::cgi::genSmallCell ($q,
+-			    $fm->localise('DOMAIN'),"header"),
+-			esmith::cgi::genSmallCell ($q,
+-			    $fm->localise('DESCRIPTION'),"header"),
+-			esmith::cgi::genSmallCell ($q,
+-			    $fm->localise('CONTENT_LABEL'),"header"),
+-			esmith::cgi::genSmallCell ($q,
+-                            $fm->localise('ACTION'),"header", 2));
+-
+-	foreach my $domain (sort { $a->key cmp $b->key } @virtualDomains)
+-	{
+-	    my $content = $domain->prop('Content') || '';
+-	    $content = $content eq 'Primary' ?
+-			$fm->localise('PRIMARY_SITE') :
+-			$fm->localise('CONTENT', {content => $content});
+-
+-	    my $description = $domain->prop('Description') || '';
+-	    my $is_removable = (($domain->prop('Removable') || 'yes') eq "yes");
+-	    $domain = $domain->key;
+-
+-	    my $actionModify = "&nbsp;"
+-				. $q->a ({href => $q->url (-absolute => 1) 
+-				. "?state=modify&domain=" . $domain}, $modify)
+-				. "&nbsp;";
+-	    my $actionRemove .= "&nbsp;";
+-
+-	    if ($is_removable)
+-	    {
+-		$actionRemove   .= $q->a ({href => $q->url (-absolute => 1) 
+-				. "?state=delete&domain=" . $domain}, $remove)
+-				. "&nbsp;";
+-	    }
+-	    else
+-	    {
+-		# If no other entries, ensure that empty "Remove" action column
+-		# is same size as "Modify" column by adding 10 spaces.
+-		$actionRemove .= "&nbsp;" x 10;
+-	    }
+-
+-	    print $q->Tr (
+-		esmith::cgi::genSmallCell ($q, 
+-		    $domain, "sme-noborders-content"),
+-		esmith::cgi::genSmallCell ($q, 
+-		    $description, "sme-noborders-content"),
+-		esmith::cgi::genSmallCell ($q, 
+-		    $content, "sme-noborders-content"),
+-		esmith::cgi::genSmallCell ($q, 
+-		    $actionModify, "sme-noborders-content"),
+-		esmith::cgi::genSmallCell ($q, 
+-		    $actionRemove, "sme-noborders-content")),"\n";
++        print $q->Tr (
++            esmith::cgi::genSmallCell( $q, $fm->localise('DOMAIN'), "header" ),
++            esmith::cgi::genSmallCell(
++                $q, $fm->localise('DESCRIPTION'), "header"
++            ),
++            esmith::cgi::genSmallCell(
++                $q, $fm->localise('CONTENT_LABEL'), "header"
++            ),
++            esmith::cgi::genSmallCell(
++                $q, $fm->localise('ACTION'),
++                "header", 2
++            )
++        );
++
++        foreach my $domain ( sort { $a->key cmp $b->key } @virtualDomains )
++        {
++            my $content = $domain->prop('Content') || '';
++            $content =
++                $content eq 'Primary'
++              ? $fm->localise('PRIMARY_SITE')
++              : $fm->localise( 'CONTENT', { content => $content } );
++
++            my $description = $domain->prop('Description') || '';
++            my $is_removable =
++              ( ( $domain->prop('Removable') || 'yes' ) eq "yes" );
++            $domain = $domain->key;
++
++            my $actionModify = "&nbsp;"
++              . $q->a(
++                {
++                        href => $q->url( -absolute => 1 )
++                      . "?state=modify&domain="
++                      . $domain
++                },
++                $modify
++              )
++              . "&nbsp;";
++            my $actionRemove .= "&nbsp;";
++
++            if ($is_removable)
++            {
++                $actionRemove .= $q->a(
++                    {
++                            href => $q->url( -absolute => 1 )
++                          . "?state=delete&domain="
++                          . $domain
++                    },
++                    $remove
++                  )
++                  . "&nbsp;";
++            }
++            else
++            {
++
++                # If no other entries, ensure that empty "Remove" action column
++                # is same size as "Modify" column by adding 10 spaces.
++                $actionRemove .= "&nbsp;" x 10;
++            }
++
++            print $q->Tr (
++                esmith::cgi::genSmallCell(
++                    $q, $domain, "sme-noborders-content"
++                ),
++                esmith::cgi::genSmallCell(
++                    $q, $description, "sme-noborders-content"
++                ),
++                esmith::cgi::genSmallCell(
++                    $q, $content, "sme-noborders-content"
++                ),
++                esmith::cgi::genSmallCell(
++                    $q, $actionModify, "sme-noborders-content"
++                ),
++                esmith::cgi::genSmallCell(
++                    $q, $actionRemove, "sme-noborders-content"
++                )
++              ),
++              "\n";
+ 
+-	}
+-	print $q->end_table;
++        }
++        print $q->end_table;
+     }
+ 
+     esmith::cgi::genFooter($fm);
+ }
+ 
+ #------------------------------------------------------------
+-# 
++#
+ #------------------------------------------------------------
+ 
+ sub genContentMenu ($$)
+ {
+-    my ($q, $currentSetting) = @_;
++    my ( $q, $currentSetting ) = @_;
+ 
+-    $currentSetting ||= 'Primary';   # this chooses the primary web site
++    $currentSetting ||= 'Primary';    # this chooses the primary web site
+ 
+     use esmith::AccountsDB;
+     my $accounts = esmith::AccountsDB->open;
+ 
+     # We do some subversion here to localize the label of "Primary".
+-    my %labels = map { $_->key => $_->prop('Name') } 
+-		    grep { $_->key ne "Primary" } $accounts->ibays;
+-    my @values = sort (keys %labels);
++    my %labels = map { $_->key => $_->prop('Name') }
++      grep { $_->key ne "Primary" } $accounts->ibays;
++    my @values = sort ( keys %labels );
+ 
+-    $labels {'Primary'} = $fm->localise('PRIMARY_SITE');
++    $labels{'Primary'} = $fm->localise('PRIMARY_SITE');
+     unshift @values, 'Primary';
+-    
+-    return esmith::cgi::genCell ($q,
+-	$q->popup_menu (-name    => 'domainContent',
+-			 -values  => \@values,
+-			 -default => $currentSetting,
+-			 -labels  => \%labels));
++
++    return esmith::cgi::genCell(
++        $q,
++        $q->popup_menu(
++            -name    => 'domainContent',
++            -values  => \@values,
++            -default => $currentSetting,
++            -labels  => \%labels
++        )
++    );
+ }
+ 
+ sub createDomain ($)
+ {
+     my ($q) = @_;
+ 
+-    esmith::cgi::genHeaderNonCacheable
+-	($q, \%conf, $fm->localise('CREATE_TITLE'));
+- 
+-    print $q->startform (-method => 'POST',
+-			 -action => $q->url (-absolute => 1));
+-
+-    print $q->table ({-CLASS => "sme-noborders"},
+-
+-	esmith::cgi::genNameValueRow ($q,
+-                                      $fm->localise('DOMAIN_NAME_LABEL'),
+-				      "domainName",
+-				      ""),
+-
+-	esmith::cgi::genNameValueRow ($q,
+-                                      $fm->localise('DESCRIPTION_LABEL'),
+-				      "domainDesc",
+-				      ""),
+-
+-	esmith::cgi::genTextRow ($q,
+-	    $q->p ( $fm->localise('CONTENT_FIELD_DESCRIPTION'))),
+-
+-        $q->Tr (
+-            esmith::cgi::genCell ($q, 
+-                $fm->localise('CONTENT_LABEL'), 
+-                "sme-noborders-label"),
+-	    genContentMenu ($q, '')),
+-
+-	esmith::cgi::genButtonRow ($q,
+-				   $q->submit (-name => 'action',
+-					       -value =>
+-                                               $fm->localise('CREATE'))));
+-
+-    print $q->hidden (-name => 'state',
+-		      -override => 1,
+-		      -default => 'performCreate');
++    esmith::cgi::genHeaderNonCacheable( $q, \%conf,
++        $fm->localise('CREATE_TITLE') );
++
++    print $q->startform (
++        -method => 'POST',
++        -action => $q->url( -absolute => 1 )
++    );
++
++    print $q->table (
++        { -CLASS => "sme-noborders" },
++
++        esmith::cgi::genNameValueRow(
++            $q, $fm->localise('DOMAIN_NAME_LABEL'),
++            "domainName", ""
++        ),
++
++        esmith::cgi::genNameValueRow(
++            $q, $fm->localise('DESCRIPTION_LABEL'),
++            "domainDesc", ""
++        ),
++
++        esmith::cgi::genTextRow(
++            $q, $q->p( $fm->localise('CONTENT_FIELD_DESCRIPTION') )
++        ),
++
++        $q->Tr(
++            esmith::cgi::genCell(
++                $q, $fm->localise('CONTENT_LABEL'),
++                "sme-noborders-label"
++            ),
++            genContentMenu( $q, '' )
++        ),
++
++        esmith::cgi::genButtonRow(
++            $q,
++            $q->submit(
++                -name  => 'action',
++                -value => $fm->localise('CREATE')
++            )
++        )
++    );
++
++    print $q->hidden (
++        -name     => 'state',
++        -override => 1,
++        -default  => 'performCreate'
++    );
+ 
+     print $q->endform;
+-    
++
+     esmith::cgi::genFooter($fm);
+     return;
+ }
+ 
+ #------------------------------------------------------------
+-# 
++#
+ #------------------------------------------------------------
+ 
+ sub performCreateDomain ($)
+@@ -311,59 +355,82 @@
+     # Validate parameters and untaint them
+     #------------------------------------------------------------
+ 
+-    my $domainName = $q->param ('domainName');
+-    if ($domainName =~ /^([a-zA-Z0-9\-\.]+)$/)
++    my $domainName = $q->param('domainName');
++    if ( $domainName =~ /^([a-zA-Z0-9\-\.]+)$/ )
+     {
+-	$domainName = $1;
++        $domainName = $1;
+     }
+     else
+     {
+-	showInitial ($q, $fm->localise('DOMAIN_NAME_VALIDATION_ERROR',
+-                                       {domainName => $domainName}), 1);
+-	return;
++        showInitial(
++            $q,
++            $fm->localise(
++                'DOMAIN_NAME_VALIDATION_ERROR',
++                { domainName => $domainName }
++            ),
++            1
++        );
++        return;
+     }
++
+     # Force to lower case
+     $domainName = lc($domainName);
+-    $q->param(-name=>'domainName', -value=>$domainName);
++    $q->param( -name => 'domainName', -value => $domainName );
+ 
+-    my $domainDesc = $q->param ('domainDesc');
+-    if ($domainDesc =~ /^([\-\'\w][\-\'\w\s\.]*)$/)
++    my $domainDesc = $q->param('domainDesc');
++    if ( $domainDesc =~ /^([\-\'\w][\-\'\w\s\.]*)$/ )
+     {
+-	$domainDesc = $1;
++        $domainDesc = $1;
+     }
+     else
+     {
+-	showInitial ($q, $fm->localise('DOMAIN_DESCRIPTION_VALIDATION_ERROR',
+-                     {domainDesc => $domainDesc}), 1);
+-	return;
++        showInitial(
++            $q,
++            $fm->localise(
++                'DOMAIN_DESCRIPTION_VALIDATION_ERROR',
++                { domainDesc => $domainDesc }
++            ),
++            1
++        );
++        return;
+     }
+ 
+-    my $domainContent = $q->param ('domainContent');
+-    if ($domainContent =~ /^(.*)$/)
++    my $domainContent = $q->param('domainContent');
++    if ( $domainContent =~ /^(.*)$/ )
+     {
+-	$domainContent = $1;
++        $domainContent = $1;
+     }
+     else
+     {
+-	$domainContent = "";
++        $domainContent = "";
+     }
+ 
+     #------------------------------------------------------------
+     # Looks good. Find out if this domain has been taken
+     #------------------------------------------------------------
+ 
+-    if ($domainsdb->get($domainName))
++    if ( $domainsdb->get($domainName) )
+     {
+-	showInitial ($q, $fm->localise('DOMAIN_IN_USE_ERROR',
+-		     {domainName => $domainName}), 1);
+-	return;
++        showInitial(
++            $q,
++            $fm->localise(
++                'DOMAIN_IN_USE_ERROR', { domainName => $domainName }
++            ),
++            1
++        );
++        return;
+     }
+ 
+     my $DomainName = $conf->get('DomainName')->value || '';
+-    if ($DomainName eq $domainName)
++    if ( $DomainName eq $domainName )
+     {
+-        showInitial ($q, $fm->localise('SYSTEM_DOMAIN_ERROR',
+-                     {domainName => $domainName}), 1);
++        showInitial(
++            $q,
++            $fm->localise(
++                'SYSTEM_DOMAIN_ERROR', { domainName => $domainName }
++            ),
++            1
++        );
+         return;
+     }
+ 
+@@ -372,70 +439,87 @@
+     # domain-create event.
+     #------------------------------------------------------------
+ 
+-    $domainsdb->new_record($domainName,
+-	    {
+-		type => 'domain',
+-		Description => $domainDesc,
+-		Content => $domainContent,
+-	    });
+-
+-    my $msg = system ("/sbin/e-smith/signal-event",
+-		    "domain-create", "$domainName") ?
+-			'ERROR_CREATING_DOMAIN' :
+-			'SUCCESSFULLY_CREATED' ;
++    $domainsdb->new_record(
++        $domainName,
++        {
++            type        => 'domain',
++            Description => $domainDesc,
++            Content     => $domainContent,
++        }
++    );
++
++    my $msg =
++      system( "/sbin/e-smith/signal-event", "domain-create", "$domainName" )
++      ? 'ERROR_CREATING_DOMAIN'
++      : 'SUCCESSFULLY_CREATED';
+ 
+-    showInitial ($q, $fm->localise($msg, {domainName => $domainName}), 0);
++    showInitial( $q, $fm->localise( $msg, { domainName => $domainName } ), 0 );
+     open STDOUT, ">/dev/null";
+-    system ("/etc/e-smith/events/actions/restart-httpd-full") == 0
+-	or die ("Error occurred while restarting httpd.\n");
++    system("/etc/e-smith/events/actions/restart-httpd-full") == 0
++      or die("Error occurred while restarting httpd.\n");
+ }
+ 
+ #------------------------------------------------------------
+-# 
++#
+ #------------------------------------------------------------
+ 
+ sub modifyDomain ($)
+ {
+     my ($q) = @_;
+ 
+-    esmith::cgi::genHeaderNonCacheable ($q, \%conf,
+-        $fm->localise('MODIFY_TITLE'));
+-
+-    print $q->startform (-method => 'POST',
+-		    -action => $q->url (-absolute => 1));
+-
+-    my $domain = $q->param ('domain');
+-
+-    if (my $d = $domainsdb->get($domain))
+-    {
+-	my $description = $d->prop('Description') || '';
+-	my $content = $d->prop('Content') || 'Primary';
+-
+-	print $q->table ({border => 0, cellspacing => 0, cellpadding => 4},
++    esmith::cgi::genHeaderNonCacheable( $q, \%conf,
++        $fm->localise('MODIFY_TITLE') );
+ 
+-			 $q->Tr (esmith::cgi::genCell ($q,
+-			     $fm->localise('DOMAIN_NAME_LABEL')),
+-			         esmith::cgi::genCell ($q, $domain)),
+-
+-		         esmith::cgi::genNameValueRow ($q,
+-			     $fm->localise('DESCRIPTION_LABEL'),
+-				     "domainDesc", $description),
+-
+-			 $q->Tr (esmith::cgi::genCell ($q,
+-                         $fm->localise('CONTENT_LABEL')),
+-				 genContentMenu ($q, $content)),
+-
+-		         esmith::cgi::genButtonRow ($q,
+-					$q->submit (-name => 'action',
+-					-value => $fm->localise('SAVE'))));
+-
+-	print $q->hidden (-name => 'domainName',
+-			  -override => 1,
+-			  -default => $domain);
+-
+-	print $q->hidden (-name => 'state',
+-			  -override => 1,
+-			  -default => 'performModify');
++    print $q->startform (
++        -method => 'POST',
++        -action => $q->url( -absolute => 1 )
++    );
++
++    my $domain = $q->param('domain');
++
++    if ( my $d = $domainsdb->get($domain) )
++    {
++        my $description = $d->prop('Description') || '';
++        my $content     = $d->prop('Content')     || 'Primary';
++
++        print $q->table (
++            { border => 0, cellspacing => 0, cellpadding => 4 },
++
++            $q->Tr(
++                esmith::cgi::genCell( $q, $fm->localise('DOMAIN_NAME_LABEL') ),
++                esmith::cgi::genCell( $q, $domain )
++            ),
++
++            esmith::cgi::genNameValueRow(
++                $q,           $fm->localise('DESCRIPTION_LABEL'),
++                "domainDesc", $description
++            ),
++
++            $q->Tr(
++                esmith::cgi::genCell( $q, $fm->localise('CONTENT_LABEL') ),
++                genContentMenu( $q, $content )
++            ),
++
++            esmith::cgi::genButtonRow(
++                $q,
++                $q->submit(
++                    -name  => 'action',
++                    -value => $fm->localise('SAVE')
++                )
++            )
++        );
++
++        print $q->hidden (
++            -name     => 'domainName',
++            -override => 1,
++            -default  => $domain
++        );
++
++        print $q->hidden (
++            -name     => 'state',
++            -override => 1,
++            -default  => 'performModify'
++        );
+     }
+ 
+     print $q->endform;
+@@ -444,7 +528,7 @@
+ }
+ 
+ #------------------------------------------------------------
+-# 
++#
+ #------------------------------------------------------------
+ 
+ sub performModifyDomain ($)
+@@ -455,38 +539,50 @@
+     # Validate parameters and untaint them
+     #------------------------------------------------------------
+ 
+-    my $domainName = $q->param ('domainName');
+-    if ($domainName =~ /^([a-zA-Z0-9\-\.]+)$/)
++    my $domainName = $q->param('domainName');
++    if ( $domainName =~ /^([a-zA-Z0-9\-\.]+)$/ )
+     {
+-	$domainName = $1;
++        $domainName = $1;
+     }
+     else
+     {
+-	showInitial ($q, $fm->localise('DOMAIN_NAME_VALIDATION_ERROR',
+-                                       {domainName => $domainName}), 1);
+-	return;
++        showInitial(
++            $q,
++            $fm->localise(
++                'DOMAIN_NAME_VALIDATION_ERROR',
++                { domainName => $domainName }
++            ),
++            1
++        );
++        return;
+     }
+ 
+-    my $domainDesc = $q->param ('domainDesc');
+-    if ($domainDesc =~ /^([\-\'\w][\-\'\w\s]*)$/)
++    my $domainDesc = $q->param('domainDesc');
++    if ( $domainDesc =~ /^([\-\'\w][\-\'\w\s]*)$/ )
+     {
+-	$domainDesc = $1;
++        $domainDesc = $1;
+     }
+     else
+     {
+-	showInitial ($q, $fm->localise('DOMAIN_DESCRIPTION_VALIDATION_ERROR',
+-                     {domainName => $domainName, domainDesc => $domainDesc}), 1);
+-	return;
++        showInitial(
++            $q,
++            $fm->localise(
++                'DOMAIN_DESCRIPTION_VALIDATION_ERROR',
++                { domainName => $domainName, domainDesc => $domainDesc }
++            ),
++            1
++        );
++        return;
+     }
+ 
+-    my $domainContent = $q->param ('domainContent');
+-    if ($domainContent =~ /^(.*)$/)
++    my $domainContent = $q->param('domainContent');
++    if ( $domainContent =~ /^(.*)$/ )
+     {
+-	$domainContent = $1;
++        $domainContent = $1;
+     }
+     else
+     {
+-	$domainContent = "";
++        $domainContent = "";
+     }
+ 
+     #------------------------------------------------------------
+@@ -494,10 +590,15 @@
+     #------------------------------------------------------------
+ 
+     my $d = $domainsdb->get($domainName);
+-    unless ($d && ($d->prop('type') eq 'domain'))
++    unless ( $d && ( $d->prop('type') eq 'domain' ) )
+     {
+-        showInitial ($q, $fm->localise('NONEXISTENT_DOMAIN_ERROR',
+-                     {domainName => $domainName}), 1);
++        showInitial(
++            $q,
++            $fm->localise(
++                'NONEXISTENT_DOMAIN_ERROR', { domainName => $domainName }
++            ),
++            1
++        );
+         return;
+     }
+ 
+@@ -506,53 +607,68 @@
+     #------------------------------------------------------------
+ 
+     $d->merge_props(
+-	    Description => $domainDesc,
+-	    Content => $domainContent,
+-	);
+-
+-    my $msg = system ("/sbin/e-smith/signal-event",
+-			"domain-modify", "$domainName") ?
+-			'ERROR_MODIFYING_DOMAIN' :
+-			'SUCCESSFULLY_MODIFIED';
+-    showInitial ($q, $fm->localise($msg, {domainName => $domainName}), 0);
++        Description => $domainDesc,
++        Content     => $domainContent,
++    );
++
++    my $msg =
++      system( "/sbin/e-smith/signal-event", "domain-modify", "$domainName" )
++      ? 'ERROR_MODIFYING_DOMAIN'
++      : 'SUCCESSFULLY_MODIFIED';
++    showInitial( $q, $fm->localise( $msg, { domainName => $domainName } ), 0 );
+     open STDOUT, ">/dev/null";
+-    system ("/etc/e-smith/events/actions/restart-httpd-full") == 0
+-	or die ("Error occurred while restarting httpd.\n");
++    system("/etc/e-smith/events/actions/restart-httpd-full") == 0
++      or die("Error occurred while restarting httpd.\n");
+ }
+ 
+ #------------------------------------------------------------
+-# 
++#
+ #------------------------------------------------------------
+ 
+ sub deleteDomain ($)
+ {
+     my ($q) = @_;
+ 
+-    esmith::cgi::genHeaderNonCacheable ($q, \%conf,
+-		$fm->localise('REMOVE_TITLE'));
++    esmith::cgi::genHeaderNonCacheable( $q, \%conf,
++        $fm->localise('REMOVE_TITLE') );
+ 
+-    print $q->startform (-method => 'POST',
+-		-action => $q->url (-absolute => 1));
++    print $q->startform (
++        -method => 'POST',
++        -action => $q->url( -absolute => 1 )
++    );
+ 
+-    my $domain = $q->param ('domain');
+-    my $d = $domainsdb->get($domain);
++    my $domain = $q->param('domain');
++    my $d      = $domainsdb->get($domain);
+ 
+     if ($d)
+     {
+-	my $domainDesc = $d->prop('Description') || '';
++        my $domainDesc = $d->prop('Description') || '';
+ 
+-	print $q->p($fm->localise('REMOVE_DESCRIPTION',
+-                    {domain => $domain, 
+-                    domainDesc => $domainDesc}));
+-	
+-	print $q->submit (-name => 'action',
+-		    -value => $fm->localise('REMOVE'));
+-	print $q->hidden (-name => 'domain',
+-		    -override => 1, -default => $domain);
+-
+-	print $q->hidden (-name	    => 'state',
+-			  -override => 1,
+-			  -default  => 'performDelete');
++        print $q->p(
++            $fm->localise(
++                'REMOVE_DESCRIPTION',
++                {
++                    domain     => $domain,
++                    domainDesc => $domainDesc
++                }
++            )
++        );
++
++        print $q->submit (
++            -name  => 'action',
++            -value => $fm->localise('REMOVE')
++        );
++        print $q->hidden (
++            -name     => 'domain',
++            -override => 1,
++            -default  => $domain
++        );
++
++        print $q->hidden (
++            -name     => 'state',
++            -override => 1,
++            -default  => 'performDelete'
++        );
+     }
+ 
+     print $q->endform;
+@@ -561,7 +677,7 @@
+ }
+ 
+ #------------------------------------------------------------
+-# 
++#
+ #------------------------------------------------------------
+ 
+ sub performDeleteDomain ($)
+@@ -572,42 +688,53 @@
+     # Attempt to delete domain
+     #------------------------------------------------------------
+ 
+-    my $domain = $q->param ('domain');
++    my $domain = $q->param('domain');
+ 
+-    if ($domain =~ /^([a-zA-Z0-9\-\.]+)$/)
++    if ( $domain =~ /^([a-zA-Z0-9\-\.]+)$/ )
+     {
+-	$domain = $1;
++        $domain = $1;
+     }
+     else
+     {
+-	# FIXME - ERROR_WHILE_REMOVING_DOMAIN doesn't adequately describe
+-	# a data validation error
+-	showInitial ($q, $fm->localise('ERROR_WHILE_REMOVING_DOMAIN',
+-                     {domain => $domain}), 1);
+-	return;
++
++        # FIXME - ERROR_WHILE_REMOVING_DOMAIN doesn't adequately describe
++        # a data validation error
++        showInitial(
++            $q,
++            $fm->localise(
++                'ERROR_WHILE_REMOVING_DOMAIN', { domain => $domain }
++            ),
++            1
++        );
++        return;
+     }
+ 
+     my $d = $domainsdb->get($domain);
+-    unless ($d && ($d->prop('type') eq 'domain'))
++    unless ( $d && ( $d->prop('type') eq 'domain' ) )
+     {
+-        showInitial ($q, $fm->localise('NONEXISTENT_DOMAIN_ERROR',
+-                     {domainName => $domain}), 1);
++        showInitial(
++            $q,
++            $fm->localise(
++                'NONEXISTENT_DOMAIN_ERROR', { domainName => $domain }
++            ),
++            1
++        );
+         return;
+     }
+ 
++    $d->merge_props( type => 'domain-deleted' );
+ 
+-    $d->merge_props(type => 'domain-deleted');
+-
+-    my $msg = system ("/sbin/e-smith/signal-event", "domain-delete", "$domain")
+-	? 'ERROR_WHILE_REMOVING_DOMAIN' : 'SUCCESSFULLY_DELETED';
++    my $msg =
++      system( "/sbin/e-smith/signal-event", "domain-delete", "$domain" )
++      ? 'ERROR_WHILE_REMOVING_DOMAIN'
++      : 'SUCCESSFULLY_DELETED';
+     $d->delete;
+ 
+-    showInitial ($q, $fm->localise($msg, {domain => $domain}), 0);
++    showInitial( $q, $fm->localise( $msg, { domain => $domain } ), 0 );
+     open STDOUT, ">/dev/null";
+-    system ("/etc/e-smith/events/actions/restart-httpd-full") == 0
+-	or die ("Error occurred while restarting httpd.\n");
++    system("/etc/e-smith/events/actions/restart-httpd-full") == 0
++      or die("Error occurred while restarting httpd.\n");
+ }
+-
+ 
+ __DATA__
+ <form>
