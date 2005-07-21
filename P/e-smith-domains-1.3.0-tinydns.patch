@@ -1,0 +1,26 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-domains-1.3.0/createlinks mezzanine_patched_e-smith-domains-1.3.0/createlinks
+--- e-smith-domains-1.3.0/createlinks	2005-07-20 19:16:41.871279504 -0600
++++ mezzanine_patched_e-smith-domains-1.3.0/createlinks	2005-07-20 19:16:29.243199264 -0600
+@@ -10,22 +10,6 @@
+ panel_link("domains", $panel);
+ 
+ #--------------------------------------------------
+-# actions for domain-create event
+-#--------------------------------------------------
+-
+-$event = "domain-create";
+-
+-event_link("tinydns-conf", $event, "50");
+-
+-#--------------------------------------------------
+-# actions for domain-delete event
+-#--------------------------------------------------
+-
+-$event = "domain-delete";
+-
+-event_link("tinydns-conf", $event, "50");
+-
+-#--------------------------------------------------
+ # actions for domain-modify event
+ #--------------------------------------------------
+ 
