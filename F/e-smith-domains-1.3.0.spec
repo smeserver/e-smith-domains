@@ -2,7 +2,7 @@ Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
 %define version 1.3.0
-%define release 06sme01
+%define release 07
 Version: %{version}
 Release: %{release}
 License: GPL
@@ -13,7 +13,7 @@ Patch0: e-smith-domains-1.3.0-02.mitel_patch
 Patch1: e-smith-domains-1.3.0-03.mitel_patch
 Patch2: e-smith-domains-1.3.0-05.mitel_patch
 Patch3: e-smith-domains-1.3.0-06.mitel_patch
-Patch4: e-smith-domains-1.3.0-tinydns.patch
+Patch4: e-smith-domains-1.3.0-07.mitel_patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -27,9 +27,9 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
-* Wed Jul 20 2005 Shad L. Lords <slords@mail.com>
-- [1.3.0-06sme01]
-- Remove stray tinydns links [SF: 1240099]
+* Wed Jul 27 2005 Charlie Brady <charlieb@e-smith.com>
+- [1.3.0-07]
+- Remove dangling tinydns-conf symlinks.[SF: 1240099]
 
 * Sat Mar 19 2005 Charlie Brady <charlieb@e-smith.com>
 - [1.3.0-06]
