@@ -1,24 +1,22 @@
 Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
-%define version 1.3.0
-%define release 07
+%define version 1.3.1
+%define release 02
 Version: %{version}
 Release: %{release}
 License: GPL
 Vendor: Mitel Networks Corporation
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
-Patch0: e-smith-domains-1.3.0-02.mitel_patch
-Patch1: e-smith-domains-1.3.0-03.mitel_patch
-Patch2: e-smith-domains-1.3.0-05.mitel_patch
-Patch3: e-smith-domains-1.3.0-06.mitel_patch
-Patch4: e-smith-domains-1.3.0-07.mitel_patch
+Patch0: e-smith-domains-1.3.1-02.mitel_patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.13.15-76
-BuildRequires: perl, perl(Test::Inline) >= 0.12
+Requires: perl(HTML::Tabulate) >= 0.23
+BuildRequires: perl(Test::Inline) >= 0.12
+BuildRequires: perl
 BuildRequires: e-smith-devtools >= 1.11.0-03
 AutoReqProv: no
 
@@ -27,6 +25,27 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
+* Thu Aug 25 2005 Gordon Rowell <gordonr@gormand.com.au>
+- [1.3.1-02]
+- Rewrite with CGI::FormMagick and HTML::Tabulate
+- Added corporate DNS settings with page to change them
+- Update to HTML::Tabulate 0.23 so that the remove link goes
+  away when we don't want it - Thanks to Gavin Carr for the 
+  immediate patch turnaround.
+- Only add "Corporate DNS Servers" to picklist if configured
+- Migrate all domains in domains db, defaulting system domain to
+  'localhost', and others to 'internet'
+- Remove table border, and change stripe colour to match other buttons
+- Add calls to signal-event for create/modify/delete
+- TODO: Insert name of domain to be deleted on remove page
+- Signal the dns-update event when DNS configuration is changed
+- Migrate the Nameserver property to the Nameservers 
+
+* Thu Aug 25 2005 Charlie Brady <charlieb@e-smith.com>
+- [1.3.1-01]
+- Roll new development stream prior to adding support for delegation to
+  Corporate Nameservers.
+
 * Wed Jul 27 2005 Charlie Brady <charlieb@e-smith.com>
 - [1.3.0-07]
 - Remove dangling tinydns-conf symlinks.[SF: 1240099]
@@ -110,10 +129,6 @@ e-smith server and gateway software - domains module.
 %prep
 %setup
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %pre
 %post

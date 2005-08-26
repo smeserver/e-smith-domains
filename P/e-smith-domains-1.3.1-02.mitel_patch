@@ -1,0 +1,1403 @@
+Index: e-smith-domains/e-smith-domains.spec
+diff -u /dev/null e-smith-domains/root/etc/e-smith/db/domains/migrate/20nameservers:1.1
+--- /dev/null	Thu Aug 25 14:06:52 2005
++++ e-smith-domains/root/etc/e-smith/db/domains/migrate/20nameservers	Thu Aug 25 13:51:33 2005
+@@ -0,0 +1,30 @@
++{
++    # vim: ft=perl ts=4 sw=4 et:
++
++    use esmith::ConfigDB;
++
++    my $db = esmith::ConfigDB->open_ro;
++
++    for my $domain ( $DB->get_all )
++    {
++        my %props = $domain->props;
++
++        if (exists $props{Nameserver})
++        {
++            $props{Nameservers} ||= $props{Nameserver};
++            $domain->delete_prop("Nameserver");
++        }
++
++        if (($props{Nameservers} || '') eq 'corporate')
++        {
++            $props{Nameservers} = '' 
++                unless ($db->get_prop('dnscache', 'Forwarder'));
++        }
++
++        $props{Nameservers} ||= (($props{SystemPrimaryDomain}||'no') eq 'yes') ?
++                                'localhost' : 'internet'; 
++
++
++        $domain->merge_props(%props);
++    }
++}
+Index: e-smith-domains/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains
+diff -u e-smith-domains/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains:1.4 e-smith-domains/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains:1.5
+--- e-smith-domains/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains:1.4	Tue Jul 13 15:17:38 2004
++++ e-smith-domains/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains	Thu Aug 25 13:51:33 2005
+@@ -20,8 +20,9 @@
+             <p>When you create a virtual domain, your server will be able to
+                 receive e-mail for that domain and will also be able to host a
+                 web site for that domain.</p>
+-            <p><a class="button-like" href="domains?state=create">Add virtual
+-                    domain</a></p>
++            <p><a class="button-like"
++                    href="domains?page=0&page_stack=&Next=Next&wherenext=DOMAINS_PAGE_CREATE">Add domain</a>
++
+             ]]>
+         </trans>
+     </entry>
+@@ -214,4 +215,76 @@
+         <base>Domains</base>
+         <trans>Domains</trans>
+     </entry>
++
++    <entry>
++        <base>DESC_CORPORATE_DNS_CURRENT</base>
++        <trans> <![CDATA[
++            <hr class="sectionbar" /><h2>Corporate DNS Settings</h2>
++            ]]>
++        </trans>
++    </entry>
++
++    <entry>
++        <base>BUTTON_CORPORATE_DNS</base>
++        <trans> <![CDATA[
++            <a class="button-like"
++                    href="domains?page=0&page_stack=&Next=Next&wherenext=DOMAINS_PAGE_CORPORATE_DNS">Modify corporate DNS settings</a>
++            ]]>
++        </trans>
++    </entry>
++
++    <entry>
++        <base>DESC_CORPORATE_DNS</base>
++        <trans>
++                If this server does not have access to the Internet, or
++                you have special requirements for DNS resolution, 
++                enter the DNS server IP addresses here.
++                These fields should be left blank unless 
++                you have a specific reason to configure other DNS servers.
++                You should not enter the address of your ISP's DNS servers
++                here, as the server is capable of resolving all
++                Internet DNS names without this additional configuration.
++        </trans>
++    </entry>
++
++    <entry>
++        <base>LABEL_CORPORATE_DNS_PRIMARY</base>
++        <trans>Primary corporate DNS server</trans>
++    </entry>
++
++    <entry>
++        <base>LABEL_CORPORATE_DNS_SECONDARY</base>
++        <trans>Secondary corporate DNS server</trans>
++    </entry>
++
++    <entry>
++        <base>DESC_NAMESERVERS</base>
++        <trans>
++            You can select whether this domain is resolved locally,
++            passed to the corporate DNS servers, or resolved by 
++            the Internet DNS servers. The default will be correct 
++            for most networks.
++        </trans>
++    </entry>
++
++    <entry>
++        <base>LABEL_NAMESERVERS</base>
++        <trans>Domain DNS servers</trans>
++    </entry>
++
++    <entry>
++        <base>localhost</base>
++        <trans>Resolve locally</trans>
++    </entry>
++
++    <entry>
++        <base>internet</base>
++        <trans>Internet DNS servers</trans>
++    </entry>
++
++    <entry>
++        <base>corporate</base>
++        <trans>Corporate DNS servers</trans>
++    </entry>
++
+ </lexicon>
+Index: e-smith-domains/root/etc/e-smith/web/functions/domains
+diff -u e-smith-domains/root/etc/e-smith/web/functions/domains:1.8 e-smith-domains/root/etc/e-smith/web/functions/domains:1.9
+--- e-smith-domains/root/etc/e-smith/web/functions/domains:1.8	Tue Dec 28 14:43:54 2004
++++ e-smith-domains/root/etc/e-smith/web/functions/domains	Thu Aug 25 13:51:33 2005
+@@ -7,8 +7,9 @@
+ # navigation  : 6000 6600
+ #----------------------------------------------------------------------
+ #----------------------------------------------------------------------
+-# copyright (C) 1999-2003 Mitel Networks Corporation
+-#
++# copyright (C) 1999-2005 Mitel Networks Corporation
++# Copyright 2005 Gordon Rowell <gordonr@gormand.com.au>
++# 
+ # This program is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation; either version 2 of the License, or
+@@ -22,725 +23,162 @@
+ # You should have received a copy of the GNU General Public License
+ # along with this program; if not, write to the Free Software
+ # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+-#
+-# Technical support for this program is available from Mitel Networks
+-# Please visit our web site www.mitel.com/sme/ for details.
+ #----------------------------------------------------------------------
+ 
+ use strict;
+-use CGI ':all';
+-use CGI::Carp qw(fatalsToBrowser);
+-use esmith::FormMagick;
+-
+-my $fm = esmith::FormMagick->new();
+-$fm->parse_xml();
+-
+-use esmith::cgi;
+-use esmith::util;
+-use esmith::ConfigDB;
+-use esmith::DomainsDB;
+-
+-sub showInitial ($$$);
+-sub genContentMenu ($$);
+-sub createDomain ($);
+-sub performCreateDomain ($);
+-sub modifyDomain ($);
+-sub performModifyDomain ($);
+-sub deleteDomain ($);
+-sub performDeleteDomain ($);
+-
+-BEGIN
+-{
+-    # Clear PATH and related environment variables so that calls to
+-    # external programs do not cause results to be tainted. See
+-    # "perlsec" manual page for details.
+-
+-    $ENV{'PATH'}  = '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin';
+-    $ENV{'SHELL'} = '/bin/bash';
+-    delete $ENV{'ENV'};
+-}
+-
+-esmith::util::setRealToEffective();
+-
+-$CGI::POST_MAX        = 1024 * 100;    # max 100K posts
+-$CGI::DISABLE_UPLOADS = 1;             # no uploads
+-
+-my $conf = esmith::ConfigDB->open_ro() or die "Unable to open configuration db";
+-my %conf = $conf->as_hash;
+-
+-my $domainsdb = esmith::DomainsDB->open
+-  or die "Could not open Domains DB\n";
+-
+-#------------------------------------------------------------
+-# examine state parameter and display the appropriate form
+-#------------------------------------------------------------
+-
+-my $q = new CGI;
+-
+-if ( !grep ( /^state$/, $q->param ) )
+-{
+-    showInitial( $q, '', 0 );
+-}
+-
+-elsif ( $q->param('state') eq "create" )
+-{
+-    createDomain($q);
+-}
+-
+-elsif ( $q->param('state') eq "performCreate" )
+-{
+-    performCreateDomain($q);
+-}
+-
+-elsif ( $q->param('state') eq "modify" )
+-{
+-    modifyDomain($q);
+-}
+-
+-elsif ( $q->param('state') eq "performModify" )
+-{
+-    performModifyDomain($q);
+-}
+-
+-elsif ( $q->param('state') eq "delete" )
+-{
+-    deleteDomain($q);
+-}
+-
+-elsif ( $q->param('state') eq "performDelete" )
+-{
+-    performDeleteDomain($q);
+-}
+-
+-else
+-{
+-    esmith::cgi::genStateError( $q, \%conf );
+-}
+-
+-exit(0);
+-
+-#------------------------------------------------------------
+-# subroutine to display initial form
+-#------------------------------------------------------------
+-
+-sub showInitial ($$$)
+-{
+-    my ( $q, $msg, $error ) = @_;
+-
+-    #------------------------------------------------------------
+-    # If there's a message, we just finished an operation so show the
+-    # status report. If no message, this is a new list of domains.
+-    #------------------------------------------------------------
+-    my $remove = $fm->localise('REMOVE');
+-    my $modify = $fm->localise('MODIFY');
+-
+-    if ( $msg eq '' )
+-    {
+-        esmith::cgi::genHeaderNonCacheable( $q, \%conf,
+-            $fm->localise('FORM_TITLE') );
+-    }
+-    else
+-    {
+-        esmith::cgi::genHeaderNonCacheable( $q, \%conf,
+-            $fm->localise('OPERATION_STATUS_REPORT') );
+-        my $class = $error ? 'error' : 'success';
+-        print $q->div ( { -class => $class }, $msg );
+-        print $q->hr;
+-    }
+-    my $bsconsole_run = $conf->get_prop('bootstrap-console', 'Run') || 'no';
+-    print $q->div({-class => 'error'},
+-        $q->h5('Warning: a reboot is required before proceeding!
+-        Failure to reboot now may leave your system in an unknown
+-        state!'))
+-        if $bsconsole_run eq 'yes';
+-
+-    #------------------------------------------------------------
+-    # Look up domains and domain descriptions
+-    #------------------------------------------------------------
+-
+-    my @virtualDomains = $domainsdb->domains;
+-
+-    print $q->p ( $fm->localise('FORM_DESCRIPTION') );
+-
+-    my $numDomains = @virtualDomains;
+-    if ( $numDomains == 0 )
+-    {
+-        print $q->h3( $fm->localise('NO_VIRTUAL_DOMAINS') );
+-    }
+-    else
+-    {
+-        print $q->h3( $fm->localise('CURRENT_LIST_OF_DOMAINS') );
+-
+-        print $q->start_table ( { -CLASS => "sme-border" } );
+-
+-        print $q->Tr (
+-            esmith::cgi::genSmallCell( $q, $fm->localise('DOMAIN'), "header" ),
+-            esmith::cgi::genSmallCell(
+-                $q, $fm->localise('DESCRIPTION'), "header"
+-            ),
+-            esmith::cgi::genSmallCell(
+-                $q, $fm->localise('CONTENT_LABEL'), "header"
+-            ),
+-            esmith::cgi::genSmallCell(
+-                $q, $fm->localise('ACTION'),
+-                "header", 2
+-            )
+-        );
+-
+-        foreach my $domain ( sort { $a->key cmp $b->key } @virtualDomains )
+-        {
+-            my $content = $domain->prop('Content') || '';
+-            $content =
+-                $content eq 'Primary'
+-              ? $fm->localise('PRIMARY_SITE')
+-              : $fm->localise( 'CONTENT', { content => $content } );
+-
+-            my $description = $domain->prop('Description') || '';
+-            my $is_removable =
+-              ( ( $domain->prop('Removable') || 'yes' ) eq "yes" );
+-            $domain = $domain->key;
+-
+-            my $actionModify = "&nbsp;"
+-              . $q->a(
+-                {
+-                        href => $q->url( -absolute => 1 )
+-                      . "?state=modify&domain="
+-                      . $domain
+-                },
+-                $modify
+-              )
+-              . "&nbsp;";
+-            my $actionRemove .= "&nbsp;";
+-
+-            if ($is_removable)
+-            {
+-                $actionRemove .= $q->a(
+-                    {
+-                            href => $q->url( -absolute => 1 )
+-                          . "?state=delete&domain="
+-                          . $domain
+-                    },
+-                    $remove
+-                  )
+-                  . "&nbsp;";
+-            }
+-            else
+-            {
+-
+-                # If no other entries, ensure that empty "Remove" action column
+-                # is same size as "Modify" column by adding 10 spaces.
+-                $actionRemove .= "&nbsp;" x 10;
+-            }
+-
+-            print $q->Tr (
+-                esmith::cgi::genSmallCell(
+-                    $q, $domain, "sme-noborders-content"
+-                ),
+-                esmith::cgi::genSmallCell(
+-                    $q, $description, "sme-noborders-content"
+-                ),
+-                esmith::cgi::genSmallCell(
+-                    $q, $content, "sme-noborders-content"
+-                ),
+-                esmith::cgi::genSmallCell(
+-                    $q, $actionModify, "sme-noborders-content"
+-                ),
+-                esmith::cgi::genSmallCell(
+-                    $q, $actionRemove, "sme-noborders-content"
+-                )
+-              ),
+-              "\n";
+-
+-        }
+-        print $q->end_table;
+-    }
++use esmith::TestUtils;
++use esmith::FormMagick::Panel::domains;
+ 
+-    esmith::cgi::genFooter($fm);
+-}
++my $fm = esmith::FormMagick::Panel::domains->new();
+ 
+-#------------------------------------------------------------
+-#
+-#------------------------------------------------------------
++$fm->display();
+ 
+-sub genContentMenu ($$)
+-{
+-    my ( $q, $currentSetting ) = @_;
+-
+-    $currentSetting ||= 'Primary';    # this chooses the primary web site
+-
+-    use esmith::AccountsDB;
+-    my $accounts = esmith::AccountsDB->open;
+-
+-    # We do some subversion here to localize the label of "Primary".
+-    my %labels = map { $_->key => $_->prop('Name') }
+-      grep { $_->key ne "Primary" } $accounts->ibays;
+-    my @values = sort ( keys %labels );
+-
+-    $labels{'Primary'} = $fm->localise('PRIMARY_SITE');
+-    unshift @values, 'Primary';
+-
+-    return esmith::cgi::genCell(
+-        $q,
+-        $q->popup_menu(
+-            -name    => 'domainContent',
+-            -values  => \@values,
+-            -default => $currentSetting,
+-            -labels  => \%labels
+-        )
+-    );
+-}
+-
+-sub createDomain ($)
+-{
+-    my ($q) = @_;
+-
+-    esmith::cgi::genHeaderNonCacheable( $q, \%conf,
+-        $fm->localise('CREATE_TITLE') );
+-
+-    print $q->startform (
+-        -method => 'POST',
+-        -action => $q->url( -absolute => 1 )
+-    );
+-
+-    print $q->table (
+-        { -CLASS => "sme-noborders" },
+-
+-        esmith::cgi::genNameValueRow(
+-            $q, $fm->localise('DOMAIN_NAME_LABEL'),
+-            "domainName", ""
+-        ),
+-
+-        esmith::cgi::genNameValueRow(
+-            $q, $fm->localise('DESCRIPTION_LABEL'),
+-            "domainDesc", ""
+-        ),
+-
+-        esmith::cgi::genTextRow(
+-            $q, $q->p( $fm->localise('CONTENT_FIELD_DESCRIPTION') )
+-        ),
+-
+-        $q->Tr(
+-            esmith::cgi::genCell(
+-                $q, $fm->localise('CONTENT_LABEL'),
+-                "sme-noborders-label"
+-            ),
+-            genContentMenu( $q, '' )
+-        ),
+-
+-        esmith::cgi::genButtonRow(
+-            $q,
+-            $q->submit(
+-                -name  => 'action',
+-                -value => $fm->localise('CREATE')
+-            )
+-        )
+-    );
+-
+-    print $q->hidden (
+-        -name     => 'state',
+-        -override => 1,
+-        -default  => 'performCreate'
+-    );
+-
+-    print $q->endform;
+-
+-    esmith::cgi::genFooter($fm);
+-    return;
+-}
++=pod
+ 
+-#------------------------------------------------------------
+-#
+-#------------------------------------------------------------
++=head1 NAME
+ 
+-sub performCreateDomain ($)
+-{
+-    my ($q) = @_;
+-
+-    #------------------------------------------------------------
+-    # Validate parameters and untaint them
+-    #------------------------------------------------------------
+-
+-    my $domainName = $q->param('domainName');
+-    if ( $domainName =~ /^([a-zA-Z0-9\-\.]+)$/ )
+-    {
+-        $domainName = $1;
+-    }
+-    else
+-    {
+-        showInitial(
+-            $q,
+-            $fm->localise(
+-                'DOMAIN_NAME_VALIDATION_ERROR',
+-                { domainName => $domainName }
+-            ),
+-            1
+-        );
+-        return;
+-    }
+-
+-    # Force to lower case
+-    $domainName = lc($domainName);
+-    $q->param( -name => 'domainName', -value => $domainName );
+-
+-    my $domainDesc = $q->param('domainDesc');
+-    if ( $domainDesc =~ /^([\-\'\w][\-\'\w\s\.]*)$/ )
+-    {
+-        $domainDesc = $1;
+-    }
+-    else
+-    {
+-        showInitial(
+-            $q,
+-            $fm->localise(
+-                'DOMAIN_DESCRIPTION_VALIDATION_ERROR',
+-                { domainDesc => $domainDesc }
+-            ),
+-            1
+-        );
+-        return;
+-    }
+-
+-    my $domainContent = $q->param('domainContent');
+-    if ( $domainContent =~ /^(.*)$/ )
+-    {
+-        $domainContent = $1;
+-    }
+-    else
+-    {
+-        $domainContent = "";
+-    }
+-
+-    #------------------------------------------------------------
+-    # Looks good. Find out if this domain has been taken
+-    #------------------------------------------------------------
+-
+-    if ( $domainsdb->get($domainName) )
+-    {
+-        showInitial(
+-            $q,
+-            $fm->localise(
+-                'DOMAIN_IN_USE_ERROR', { domainName => $domainName }
+-            ),
+-            1
+-        );
+-        return;
+-    }
+-
+-    my $DomainName = $conf->get('DomainName')->value || '';
+-    if ( $DomainName eq $domainName )
+-    {
+-        showInitial(
+-            $q,
+-            $fm->localise(
+-                'SYSTEM_DOMAIN_ERROR', { domainName => $domainName }
+-            ),
+-            1
+-        );
+-        return;
+-    }
+-
+-    #------------------------------------------------------------
+-    # Domain is available! Update domains database and signal the
+-    # domain-create event.
+-    #------------------------------------------------------------
+-
+-    $domainsdb->new_record(
+-        $domainName,
+-        {
+-            type        => 'domain',
+-            Description => $domainDesc,
+-            Content     => $domainContent,
+-        }
+-    );
+-
+-    my $msg =
+-      system( "/sbin/e-smith/signal-event", "domain-create", "$domainName" )
+-      ? 'ERROR_CREATING_DOMAIN'
+-      : 'SUCCESSFULLY_CREATED';
+-
+-    showInitial( $q, $fm->localise( $msg, { domainName => $domainName } ), 0 );
+-    open STDOUT, ">/dev/null";
+-    system("/etc/e-smith/events/actions/restart-httpd-full") == 0
+-      or die("Error occurred while restarting httpd.\n");
+-}
++domains -- create/modify/delete domains
+ 
+-#------------------------------------------------------------
+-#
+-#------------------------------------------------------------
++=head2 DESCRIPTION
+ 
+-sub modifyDomain ($)
+-{
+-    my ($q) = @_;
+-
+-    esmith::cgi::genHeaderNonCacheable( $q, \%conf,
+-        $fm->localise('MODIFY_TITLE') );
+-
+-    print $q->startform (
+-        -method => 'POST',
+-        -action => $q->url( -absolute => 1 )
+-    );
+-
+-    my $domain = $q->param('domain');
+-
+-    if ( my $d = $domainsdb->get($domain) )
+-    {
+-        my $description = $d->prop('Description') || '';
+-        my $content     = $d->prop('Content')     || 'Primary';
+-
+-        print $q->table (
+-            { border => 0, cellspacing => 0, cellpadding => 4 },
+-
+-            $q->Tr(
+-                esmith::cgi::genCell( $q, $fm->localise('DOMAIN_NAME_LABEL') ),
+-                esmith::cgi::genCell( $q, $domain )
+-            ),
+-
+-            esmith::cgi::genNameValueRow(
+-                $q,           $fm->localise('DESCRIPTION_LABEL'),
+-                "domainDesc", $description
+-            ),
+-
+-            $q->Tr(
+-                esmith::cgi::genCell( $q, $fm->localise('CONTENT_LABEL') ),
+-                genContentMenu( $q, $content )
+-            ),
+-
+-            esmith::cgi::genButtonRow(
+-                $q,
+-                $q->submit(
+-                    -name  => 'action',
+-                    -value => $fm->localise('SAVE')
+-                )
+-            )
+-        );
+-
+-        print $q->hidden (
+-            -name     => 'domainName',
+-            -override => 1,
+-            -default  => $domain
+-        );
+-
+-        print $q->hidden (
+-            -name     => 'state',
+-            -override => 1,
+-            -default  => 'performModify'
+-        );
+-    }
+-
+-    print $q->endform;
+-    esmith::cgi::genFooter($fm);
+-    return;
+-}
++This screen allows the administrator to create, modify or delete 
++domains.
+ 
+-#------------------------------------------------------------
+-#
+-#------------------------------------------------------------
++=begin testing
+ 
+-sub performModifyDomain ($)
+-{
+-    my ($q) = @_;
+-
+-    #------------------------------------------------------------
+-    # Validate parameters and untaint them
+-    #------------------------------------------------------------
+-
+-    my $domainName = $q->param('domainName');
+-    if ( $domainName =~ /^([a-zA-Z0-9\-\.]+)$/ )
+-    {
+-        $domainName = $1;
+-    }
+-    else
+-    {
+-        showInitial(
+-            $q,
+-            $fm->localise(
+-                'DOMAIN_NAME_VALIDATION_ERROR',
+-                { domainName => $domainName }
+-            ),
+-            1
+-        );
+-        return;
+-    }
+-
+-    my $domainDesc = $q->param('domainDesc');
+-    if ( $domainDesc =~ /^([\-\'\w][\-\'\w\s]*)$/ )
+-    {
+-        $domainDesc = $1;
+-    }
+-    else
+-    {
+-        showInitial(
+-            $q,
+-            $fm->localise(
+-                'DOMAIN_DESCRIPTION_VALIDATION_ERROR',
+-                { domainName => $domainName, domainDesc => $domainDesc }
+-            ),
+-            1
+-        );
+-        return;
+-    }
+-
+-    my $domainContent = $q->param('domainContent');
+-    if ( $domainContent =~ /^(.*)$/ )
+-    {
+-        $domainContent = $1;
+-    }
+-    else
+-    {
+-        $domainContent = "";
+-    }
+-
+-    #------------------------------------------------------------
+-    # Looks good. Make sure this is a valid domain
+-    #------------------------------------------------------------
+-
+-    my $d = $domainsdb->get($domainName);
+-    unless ( $d && ( $d->prop('type') eq 'domain' ) )
+-    {
+-        showInitial(
+-            $q,
+-            $fm->localise(
+-                'NONEXISTENT_DOMAIN_ERROR', { domainName => $domainName }
+-            ),
+-            1
+-        );
+-        return;
+-    }
+-
+-    #------------------------------------------------------------
+-    # Update domains database and signal the domain-modify event.
+-    #------------------------------------------------------------
+-
+-    $d->merge_props(
+-        Description => $domainDesc,
+-        Content     => $domainContent,
+-    );
+-
+-    my $msg =
+-      system( "/sbin/e-smith/signal-event", "domain-modify", "$domainName" )
+-      ? 'ERROR_MODIFYING_DOMAIN'
+-      : 'SUCCESSFULLY_MODIFIED';
+-    showInitial( $q, $fm->localise( $msg, { domainName => $domainName } ), 0 );
+-    open STDOUT, ">/dev/null";
+-    system("/etc/e-smith/events/actions/restart-httpd-full") == 0
+-      or die("Error occurred while restarting httpd.\n");
+-}
++=end testing
+ 
+-#------------------------------------------------------------
+-#
+-#------------------------------------------------------------
++=cut
+ 
+-sub deleteDomain ($)
+-{
+-    my ($q) = @_;
+-
+-    esmith::cgi::genHeaderNonCacheable( $q, \%conf,
+-        $fm->localise('REMOVE_TITLE') );
+-
+-    print $q->startform (
+-        -method => 'POST',
+-        -action => $q->url( -absolute => 1 )
+-    );
+-
+-    my $domain = $q->param('domain');
+-    my $d      = $domainsdb->get($domain);
+-
+-    if ($d)
+-    {
+-        my $domainDesc = $d->prop('Description') || '';
+-
+-        print $q->p(
+-            $fm->localise(
+-                'REMOVE_DESCRIPTION',
+-                {
+-                    domain     => $domain,
+-                    domainDesc => $domainDesc
+-                }
+-            )
+-        );
+-
+-        print $q->submit (
+-            -name  => 'action',
+-            -value => $fm->localise('REMOVE')
+-        );
+-        print $q->hidden (
+-            -name     => 'domain',
+-            -override => 1,
+-            -default  => $domain
+-        );
+-
+-        print $q->hidden (
+-            -name     => 'state',
+-            -override => 1,
+-            -default  => 'performDelete'
+-        );
+-    }
+-
+-    print $q->endform;
+-    esmith::cgi::genFooter($fm);
+-    return;
+-}
+ 
+-#------------------------------------------------------------
+-#
+-#------------------------------------------------------------
++__DATA__
++<form title="FORM_TITLE" 
++    header="/etc/e-smith/web/common/head.tmpl" 
++    footer="/etc/e-smith/web/common/foot.tmpl">
+ 
+-sub performDeleteDomain ($)
+-{
+-    my ($q) = @_;
+-
+-    #------------------------------------------------------------
+-    # Attempt to delete domain
+-    #------------------------------------------------------------
+-
+-    my $domain = $q->param('domain');
+-
+-    if ( $domain =~ /^([a-zA-Z0-9\-\.]+)$/ )
+-    {
+-        $domain = $1;
+-    }
+-    else
+-    {
+-
+-        # FIXME - ERROR_WHILE_REMOVING_DOMAIN doesn't adequately describe
+-        # a data validation error
+-        showInitial(
+-            $q,
+-            $fm->localise(
+-                'ERROR_WHILE_REMOVING_DOMAIN', { domain => $domain }
+-            ),
+-            1
+-        );
+-        return;
+-    }
+-
+-    my $d = $domainsdb->get($domain);
+-    unless ( $d && ( $d->prop('type') eq 'domain' ) )
+-    {
+-        showInitial(
+-            $q,
+-            $fm->localise(
+-                'NONEXISTENT_DOMAIN_ERROR', { domainName => $domain }
+-            ),
+-            1
+-        );
+-        return;
+-    }
+-
+-    $d->merge_props( type => 'domain-deleted' );
+-
+-    my $msg =
+-      system( "/sbin/e-smith/signal-event", "domain-delete", "$domain" )
+-      ? 'ERROR_WHILE_REMOVING_DOMAIN'
+-      : 'SUCCESSFULLY_DELETED';
+-    $d->delete;
+-
+-    showInitial( $q, $fm->localise( $msg, { domain => $domain } ), 0 );
+-    open STDOUT, ">/dev/null";
+-    system("/etc/e-smith/events/actions/restart-httpd-full") == 0
+-      or die("Error occurred while restarting httpd.\n");
+-}
++    <page name="First" pre-event="print_status_message()">
++
++        <description>FORM_DESCRIPTION</description>
++
++        <subroutine src="print_domains_table()" />
++
++        <field type="literal" >
++          <description>DESC_CORPORATE_DNS_CURRENT</description>
++        </field>
++
++        <field type="literal" id="Forwarder"
++              value="get_prop('dnscache', 'Forwarder')" 
++              display="get_prop('dnscache', 'Forwarder')" >
++          <label>LABEL_CORPORATE_DNS_PRIMARY</label>
++        </field>
++
++        <field type="literal" id="Forwarder2"
++              value="get_prop('dnscache', 'Forwarder2')" 
++              display="get_prop('dnscache', 'Forwarder2')" >
++          <label>LABEL_CORPORATE_DNS_SECONDARY</label>
++        </field>
++
++        <field type="literal" value="" id="button_corporate_dns" >
++          <description>BUTTON_CORPORATE_DNS</description>
++        </field>
++
++    </page>
++
++    <page name="DOMAINS_PAGE_CREATE"
++            pre-event="turn_off_buttons()"
++            post-event="create_modify_domain('create')" >
++
++        <description>CREATE_TITLE</description>
++
++        <field type="text" id="Domain" validation="validate_Domain">
++            <label>DOMAIN_NAME_LABEL</label>
++        </field>
++
++        <field type="text" id="Description" validation="nonblank">
++            <label>DESCRIPTION_LABEL</label>
++        </field>
++
++        <field type="select" id="Content"
++                options="get_content_options()"
++                value="get_content_value()">
++
++            <label>CONTENT_LABEL</label>
++            <description>CONTENT_FIELD_DESCRIPTION</description>
++        </field>
++
++        <field type="select" id="Nameservers"
++                options="get_nameserver_options()"
++                value="get_nameserver_value()">
++
++            <label>LABEL_NAMESERVERS</label>
++            <description>DESC_NAMESERVERS</description>
++        </field>
++
++        <subroutine src="print_button('CREATE')" />
++    </page>
++
++    <page name="DOMAINS_PAGE_MODIFY"
++            pre-event="turn_off_buttons()"
++            post-event="create_modify_domain('modify')" >
++
++        <description>MODIFY_TITLE</description>
++
++        <field type="literal" id="Domain" >
++            <label>DOMAIN_NAME_LABEL</label>
++        </field>
++
++        <field type="text" id="Description" 
++            value="get_description_value()"
++            validation="nonblank">
++            <label>DESCRIPTION_LABEL</label>
++        </field>
++
++        <field type="select" id="Content"
++                options="get_content_options()"
++                value="get_content_value()">
++
++            <label>CONTENT_LABEL</label>
++            <description>CONTENT_FIELD_DESCRIPTION</description>
++        </field>
++
++        <field type="select" id="Nameservers"
++                options="get_nameserver_options()"
++                value="get_nameserver_value()" >
++
++            <label>LABEL_NAMESERVERS</label>
++            <description>DESC_NAMESERVERS</description>
++        </field>
++
++        <subroutine src="print_button('MODIFY')" />
++    </page>
++
++    <page name="DOMAINS_PAGE_REMOVE"
++            pre-event="turn_off_buttons()"
++            post-event="delete_domain()" >
++
++        <description>REMOVE_TITLE</description>
++
++        <subroutine src="print_button('REMOVE')" />
++    </page>
++
++    <page name="DOMAINS_PAGE_CORPORATE_DNS"
++            pre-event="turn_off_buttons()"
++            post-event="modify_dns" >
++
++        <field type="text" id="Forwarder" size="15"
++              value="get_prop('dnscache', 'Forwarder')"
++              validation="ip_number_or_blank">
++          <label>LABEL_CORPORATE_DNS_PRIMARY</label>
++          <description>DESC_CORPORATE_DNS</description>
++        </field>
++
++        <field type="text" id="Forwarder2" size="15"
++              value="get_prop('dnscache', 'Forwarder2')"
++              validation="ip_number_or_blank">
++          <label>LABEL_CORPORATE_DNS_SECONDARY</label>
++        </field>
++
++        <subroutine src="print_button('SAVE')" />
++    </page>
+ 
+-__DATA__
+-<form>
+ </form>
+Index: e-smith-domains/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm
+diff -u /dev/null e-smith-domains/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm:1.1
+--- /dev/null	Thu Aug 25 14:06:53 2005
++++ e-smith-domains/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm	Thu Aug 25 13:51:33 2005
+@@ -0,0 +1,387 @@
++#!/usr/bin/perl -w 
++
++#----------------------------------------------------------------------
++# $Id: useraccounts.pm,v 1.108 2004/11/11 20:05:56 charlieb Exp $
++#----------------------------------------------------------------------
++# copyright (C) 1999-2005 Mitel Networks Corporation
++# Copyright 2005 Gordon Rowell <gordonr@gormand.com.au>
++# 
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
++#----------------------------------------------------------------------
++package    esmith::FormMagick::Panel::domains;
++
++use strict;
++
++use esmith::FormMagick;
++use esmith::AccountsDB;
++use esmith::DomainsDB;
++use esmith::ConfigDB;
++use Exporter;
++use Carp qw(verbose);
++
++use HTML::Tabulate;
++
++our @ISA = qw(esmith::FormMagick Exporter);
++
++our @EXPORT = qw();
++
++our $VERSION = sprintf '%d.%03d', q$Revision: 1.108 $ =~ /: (\d+).(\d+)/;
++
++our $db = esmith::ConfigDB->open();
++our $ddb = esmith::DomainsDB->open();
++our $adb = esmith::AccountsDB->open_ro();
++
++=pod 
++
++=head1 NAME
++
++esmith::FormMagick::Panels::domains - Domains panel functions
++
++=head1 SYNOPSIS
++
++use esmith::FormMagick::Panels::domains;
++
++my $panel = esmith::FormMagick::Panel::domains->new();
++$panel->display();
++
++=head1 DESCRIPTION
++
++
++=head2 new();
++
++Exactly as for esmith::FormMagick
++
++=begin testing
++
++$ENV{ESMITH_DOMAINS_DB} = "10e-smith-base/domains.conf";
++$ENV{ESMITH_CONFIG_DB} = "10e-smith-base/configuration.conf";
++
++open DATA, "echo '<form></form>'|";
++use_ok('esmith::FormMagick::Panel::domains');
++use vars qw($panel);
++ok($panel = esmith::FormMagick::Panel::domains->new(), 
++"Create panel object");
++close DATA;
++isa_ok($panel, 'esmith::FormMagick::Panel::domains');
++$panel->{cgi} = CGI->new();
++$panel->parse_xml();
++
++{ package esmith::FormMagick::Panel::domains;
++our $domainsdb;
++::isa_ok($domainsdb, 'esmith::DomainsDB');
++}
++
++=end testing
++
++=cut
++
++sub new {
++    shift;
++    my $self = esmith::FormMagick->new();
++    $self->{calling_package} = (caller)[0];
++    bless $self;
++    return $self;
++}
++
++=head1 HTML GENERATION ROUTINES
++
++Routines for generating chunks of HTML needed by the panel.
++
++=head2 print_domains_table
++
++Prints out the domains table on the front page.
++
++=cut
++
++sub print_domains_table
++{
++    my $self = shift;
++    my $q = $self->{cgi};
++
++    my $domains_table = 
++    {
++       title => $self->localise('CURRENT_LIST_OF_DOMAINS'),
++       
++       stripe => '#D4D0C8',
++
++       fields => [ qw(Domain Description Content Nameservers Modify Remove) ],
++
++       labels => 1,
++
++       field_attr => {
++                       Modify => { link => \&modify_link },
++                       Remove => { link => \&remove_link, 
++                                    value => \&remove_value },
++                     },
++           };
++
++    my @data = ();
++
++    my $modify = $self->localise('MODIFY');
++    my $remove = $self->localise('REMOVE');
++
++    for ($ddb->domains)
++    {
++        my $ns = $_->prop('Nameservers') || 'internet';
++
++        push @data, 
++            { Domain => $_->key, $_->props, 
++              Modify => $modify, Remove => $remove,
++              Nameservers => $self->localise($ns),
++            }
++    }
++
++    my $t = HTML::Tabulate->new($domains_table);
++
++    $t->render(\@data, $domains_table);
++}
++
++sub modify_link
++{
++    my ($data_item, $row, $field) = @_;
++
++    return "domains?page=0&page_stack=&Next=Next&Domain=" .
++            $row->{Domain} . "&wherenext=DOMAINS_PAGE_MODIFY";
++}
++
++sub remove_link
++{
++    my ($data_item, $row, $field) = @_;
++
++    return undef if (($row->{Removable} || "yes") eq "no");
++
++    return "domains?page=0&page_stack=&Next=Next&Domain=" .
++            $row->{Domain} . "&wherenext=DOMAINS_PAGE_REMOVE";
++}
++
++sub remove_value
++{
++    my ($data_item, $row, $field) = @_;
++
++    return "" if (($row->{Removable} || "yes") eq "no");
++
++    return $row->{Remove};
++}
++
++sub get_content_options
++{
++    my $self = shift;
++
++    # We do some subversion here to localize the label of "Primary".
++    my %options = map { $_->key => $_->prop('Name') }
++      grep { $_->key ne "Primary" } $adb->ibays;
++
++    $options{'Primary'} = $self->localise('PRIMARY_SITE');
++
++    return \%options
++}
++
++sub get_content_value
++{
++    my $self = shift;
++    my $q = $self->{cgi};
++
++    my $domain = $q->param('Domain') || undef;
++
++    return $domain ? $ddb->get_prop($domain, 'Content') : 'Primary';
++}
++
++sub get_description_value
++{
++    my $self = shift;
++    my $q = $self->{cgi};
++
++    my $domain = $q->param('Domain') || undef;
++
++    return $ddb->get_prop($domain, 'Description');
++}
++
++sub get_nameserver_options
++{
++    my $self = shift;
++    my $q = $self->{cgi};
++
++    my $domain = $q->param('Domain') || undef;
++
++    my @options = qw(localhost internet);
++    
++    push @options, 'corporate' if ($db->get_prop('dnscache', 'Forwarder'));
++
++    my $ns = ($ddb->get_prop($domain, 'Nameservers') || 'internet');
++
++    push @options, $ns unless scalar grep { /^$ns$/ } @options;
++    
++    return \@options;
++}
++
++sub get_nameserver_value
++{
++    my $self = shift;
++    my $q = $self->{cgi};
++
++    my $domain = $q->param('Domain') || undef;
++
++    return ($ddb->get_prop($domain, 'Nameservers') || 'internet');
++}
++
++sub validate_Domain
++{
++    my $self = shift;
++    my $domain = lc shift;
++
++    return ($domain =~ /^([a-zA-Z0-9\-\.]+)$/) ? 'OK' :
++                            'DOMAIN_NAME_VALIDATION_ERROR';
++}
++
++sub validate_Description
++{
++    # XXX - FIXME - NOTREACHED
++    # We used to use the Description in the Appletalk volume name
++    # which meant it needed validation. I don't see any reason to
++    # do this any more
++    
++    my $self = shift;
++    my $description = shift;
++
++    return ($description =~ /^([\-\'\w][\-\'\w\s\.]*)$/) ? 'OK' :
++                    'DOMAIN_DESCRIPTION_VALIDATION_ERROR';
++}
++
++sub ip_number_or_blank
++{
++    # XXX - FIXME - we should push this down into CGI::FormMagick
++
++    my $self = shift;
++    my $ip = shift;
++
++    if (!defined($ip) || $ip eq "")
++    {
++        return 'OK';
++    }
++                                    
++    return CGI::FormMagick::Validator::ip_number($self, $ip);
++}
++
++=head2 get_prop ITEM PROP
++
++A simple accessor for esmith::ConfigDB::Record::prop
++
++=cut
++
++sub get_prop
++{
++    # XXX - FIXME - we should push this down to esmith::FormMagick
++
++    my ($self, $item, $prop, $default) = @_;
++
++    return $db->get_prop($item, $prop) || $default;
++}
++
++sub modify_dns
++{
++    my ($fm) = @_;
++    my $q = $fm->{'cgi'};
++
++    my $forwarder = $q->param('Forwarder') || '';
++    my $forwarder2 = $q->param('Forwarder2') || '';
++
++    ($forwarder, $forwarder2) = ($forwarder2, '')
++        if ($forwarder2 and not $forwarder);
++
++    $db->set_prop('dnscache', 'Forwarder', $forwarder);
++    $db->set_prop('dnscache', 'Forwarder2', $forwarder2);
++
++    unless ( system( "/sbin/e-smith/signal-event", "dns-update" ) == 0 )
++    {
++        $fm->error('ERROR_UPDATING');
++        return undef;
++    }
++
++    return $fm->success('SUCCESS');
++}
++
++sub create_modify_domain
++{
++    my ($fm, $action) = @_;
++    my $q = $fm->{'cgi'};
++
++    my $domain = $q->param('Domain');
++
++    $domain = $1 if ($domain =~ /^([\w\.]+)$/);
++
++    my $rec = $ddb->get($domain);
++
++    if ($rec and $action eq 'create')
++    {
++        $fm->error('DOMAIN_IN_USE_ERROR');
++        return undef;
++    }
++
++    if (not $rec and $action eq 'modify')
++    {
++        $fm->error('NONEXISTENT_DOMAIN_ERROR');
++        return undef;
++    }
++
++    $rec ||= $ddb->new_record($domain, { type => 'domain' });
++
++    my %props;
++
++    $props{$_} = $q->param($_) for ( qw(Content Description Nameservers) );
++
++    $rec->merge_props(%props);
++
++    my $status = system( "/sbin/e-smith/signal-event", 
++                        "domain-$action", "$domain" );
++
++    if ($status)
++    {
++        $fm->error($action eq 'create' ? 'ERROR_CREATING_DOMAIN'
++                                       : 'ERROR_MODIFYING_DOMAIN');
++        return undef;
++    }
++
++    $fm->success($action eq 'create' ? 'SUCCESSFULLY_CREATED'
++                                     : 'SUCCESSFULLY_MODIFIED');
++}
++
++sub delete_domain
++{
++    my ($fm, $action) = @_;
++    my $q = $fm->{'cgi'};
++
++    my $domain = $q->param('Domain');
++
++    $domain = $1 if ($domain =~ /^([\w\.]+)$/);
++
++    my $rec = $ddb->get($domain);
++
++    if (not $rec)
++    {
++        $fm->error('NONEXISTENT_DOMAIN_ERROR');
++        return undef;
++    }
++
++    $rec->set_prop('type', 'domain-deleted');
++
++    if (system("/sbin/e-smith/signal-event", "domain-delete", "$domain") == 0)
++    {
++        $rec->delete;
++        return $fm->success('SUCCESSFULLY_DELETED');
++    }
++
++    return $fm->error('ERROR_WHILE_REMOVING_DOMAIN');
++}
++1;
