@@ -2,7 +2,7 @@ Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
 %define version 1.3.3
-%define release 03
+%define release 04
 Version: %{version}
 Release: %{release}
 License: GPL
@@ -26,6 +26,9 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
+* Wed Nov 30 2005 Gordon Rowell <gordonr@gormand.com.au> 1.3.3-04
+- Bump release number only
+
 * Sun Nov 27 2005 Charlie Brady <charlieb@e-smith.com>
 - [1.3.3-03]
 - Regenerate tinydns data file during domain-{create,delete,modify}.
