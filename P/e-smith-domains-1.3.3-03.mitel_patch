@@ -1,0 +1,29 @@
+Index: e-smith-domains/createlinks
+diff -u e-smith-domains/createlinks:1.6 e-smith-domains/createlinks:1.7
+--- e-smith-domains/createlinks:1.6	Wed Jul 27 12:27:03 2005
++++ e-smith-domains/createlinks	Sun Nov 27 05:12:22 2005
+@@ -15,7 +15,7 @@
+ 
+ $event = "domain-create";
+ 
+-#safe_symlink("sigusr1", "root/etc/e-smith/events/$event/services2adjust/tinydns");
++safe_symlink("sigusr1", "root/etc/e-smith/events/$event/services2adjust/tinydns");
+ 
+ #--------------------------------------------------
+ # actions for domain-delete event
+@@ -23,7 +23,7 @@
+ 
+ $event = "domain-delete";
+ 
+-#safe_symlink("sigusr1", "root/etc/e-smith/events/$event/services2adjust/tinydns");
++safe_symlink("sigusr1", "root/etc/e-smith/events/$event/services2adjust/tinydns");
+ 
+ #--------------------------------------------------
+ # actions for domain-modify event
+@@ -32,4 +32,5 @@
+ $event = "domain-modify";
+ 
+ templates2events("/home/e-smith/ssl.pem/pem", $event);
++safe_symlink("sigusr1", "root/etc/e-smith/events/$event/services2adjust/tinydns");
+ 
+Index: e-smith-domains/e-smith-domains.spec

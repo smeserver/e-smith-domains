@@ -1,0 +1,69 @@
+Index: e-smith-domains/e-smith-domains.spec
+diff -u e-smith-domains/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm:1.1 e-smith-domains/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm:1.2
+--- e-smith-domains/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm:1.1	Thu Aug 25 13:51:33 2005
++++ e-smith-domains/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm	Tue Nov 15 22:00:46 2005
+@@ -1,7 +1,7 @@
+ #!/usr/bin/perl -w 
+ 
+ #----------------------------------------------------------------------
+-# $Id: useraccounts.pm,v 1.108 2004/11/11 20:05:56 charlieb Exp $
++# $Id: domains.pm,v 1.1 2005/08/25 17:51:33 charlieb Exp $
+ #----------------------------------------------------------------------
+ # copyright (C) 1999-2005 Mitel Networks Corporation
+ # Copyright 2005 Gordon Rowell <gordonr@gormand.com.au>
+@@ -37,12 +37,14 @@
+ 
+ our @EXPORT = qw();
+ 
+-our $VERSION = sprintf '%d.%03d', q$Revision: 1.108 $ =~ /: (\d+).(\d+)/;
++our $VERSION = sprintf '%d.%03d', q$Revision: 1.1 $ =~ /: (\d+).(\d+)/;
+ 
+ our $db = esmith::ConfigDB->open();
+ our $ddb = esmith::DomainsDB->open();
+ our $adb = esmith::AccountsDB->open_ro();
+ 
++our $REGEXP_DOMAIN = qq([a-zA-Z0-9\-\.]+);
++
+ =pod 
+ 
+ =head1 NAME
+@@ -241,7 +243,7 @@
+     my $self = shift;
+     my $domain = lc shift;
+ 
+-    return ($domain =~ /^([a-zA-Z0-9\-\.]+)$/) ? 'OK' :
++    return ($domain =~ /^($REGEXP_DOMAIN)$/) ? 'OK' :
+                             'DOMAIN_NAME_VALIDATION_ERROR';
+ }
+ 
+@@ -319,7 +321,14 @@
+ 
+     my $domain = $q->param('Domain');
+ 
+-    $domain = $1 if ($domain =~ /^([\w\.]+)$/);
++    $domain = $1 if ($domain =~ /^($REGEXP_DOMAIN)$/);
++
++    unless ($domain)
++    {
++        $fm->error($action eq 'create' ? 'ERROR_CREATING_DOMAIN'
++                                        : 'ERROR_MODIFYING_DOMAIN');
++        return undef;
++    }
+ 
+     my $rec = $ddb->get($domain);
+ 
+@@ -364,7 +373,13 @@
+ 
+     my $domain = $q->param('Domain');
+ 
+-    $domain = $1 if ($domain =~ /^([\w\.]+)$/);
++    $domain = $1 if ($domain =~ /^($REGEXP_DOMAIN)$/);
++
++    unless ($domain)
++    {
++        $fm->error('ERROR_WHILE_REMOVING_DOMAIN');
++        return undef;
++    }
+ 
+     my $rec = $ddb->get($domain);
+ 

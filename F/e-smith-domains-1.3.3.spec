@@ -1,15 +1,16 @@
 Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
-%define version 1.3.1
-%define release 02
+%define version 1.3.3
+%define release 03
 Version: %{version}
 Release: %{release}
 License: GPL
 Vendor: Mitel Networks Corporation
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
-Patch0: e-smith-domains-1.3.1-02.mitel_patch
+Patch0: e-smith-domains-1.3.3-02.mitel_patch
+Patch1: e-smith-domains-1.3.3-03.mitel_patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -25,6 +26,38 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
+* Sun Nov 27 2005 Charlie Brady <charlieb@e-smith.com>
+- [1.3.3-03]
+- Regenerate tinydns data file during domain-{create,delete,modify}.
+  [SF: 1366653]
+
+* Tue Nov 15 2005 Gordon Rowell <gordonr@e-smith.com>
+- [1.3.3-02]
+- Use a single validator for domain names and complain if the
+  validation fails. Previously hyphens passed the panel validator
+  but failed on add (or delete).
+- TODO: Strengthen the regexp [SF: 1352880]
+
+* Fri Oct 14 2005 Gordon Rowell <gordonr@e-smith.com>
+- [1.3.3-01]
+- Remove L10Ns from base packages [SF: 1309520]
+
+* Fri Oct 14 2005 Gordon Rowell <gordonr@e-smith.com>
+- [1.3.2-01]
+- New dev stream before relocating L10Ns
+
+* Fri Sep 30 2005 Gordon Rowell <gordonr@e-smith.com>
+- [1.3.1-05]
+- Added Italian L10N - Thanks Filippo Carletti [SF: 1309266]
+
+* Mon Sep 26 2005 Gordon Rowell <gordonr@e-smith.com>
+- [1.3.1-04]
+- French L10N fixups (and reformat) - Thanks Didier Rambeau [SF: 1293787]
+
+* Mon Sep 26 2005 Gordon Rowell <gordonr@e-smith.com>
+- [1.3.1-03]
+- Added German L10N - Thanks Dietmar Berteld [SF: 1293325]
+
 * Thu Aug 25 2005 Gordon Rowell <gordonr@gormand.com.au>
 - [1.3.1-02]
 - Rewrite with CGI::FormMagick and HTML::Tabulate
@@ -129,6 +162,7 @@ e-smith server and gateway software - domains module.
 %prep
 %setup
 %patch0 -p1
+%patch1 -p1
 
 %pre
 %post
