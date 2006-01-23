@@ -2,7 +2,7 @@ Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
 %define version 1.3.3
-%define release 04
+%define release 05
 Version: %{version}
 Release: %{release}
 License: GPL
@@ -26,6 +26,10 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
+* Mon Jan 23 2006 Gordon Rowell <gordonr@gormand.com.au> 1.3.3-05
+- Remove empty pre and post scriptlets. In some cases they cause
+  package upgrade failures. [SME: 544]
+
 * Wed Nov 30 2005 Gordon Rowell <gordonr@gormand.com.au> 1.3.3-04
 - Bump release number only
 
@@ -166,9 +170,6 @@ e-smith server and gateway software - domains module.
 %setup
 %patch0 -p1
 %patch1 -p1
-
-%pre
-%post
 
 %build
 # Force creation of potentially empty directories
