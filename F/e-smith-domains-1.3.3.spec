@@ -2,7 +2,7 @@ Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
 %define version 1.3.3
-%define release 05
+%define release 06
 Version: %{version}
 Release: %{release}
 License: GPL
@@ -11,6 +11,7 @@ Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-domains-1.3.3-02.mitel_patch
 Patch1: e-smith-domains-1.3.3-03.mitel_patch
+Patch2: e-smith-domains-1.3.3-localisedomainheaders.patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -26,6 +27,10 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
+
+* Sat Feb 18 2006 Gavin Weight <gweight@gmail.com> 1.3.3-6
+- Table and columns headers not translated. [SME: 809]
+
 * Mon Jan 23 2006 Gordon Rowell <gordonr@gormand.com.au> 1.3.3-05
 - Remove empty pre and post scriptlets. In some cases they cause
   package upgrade failures. [SME: 544]
@@ -170,6 +175,7 @@ e-smith server and gateway software - domains module.
 %setup
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 # Force creation of potentially empty directories

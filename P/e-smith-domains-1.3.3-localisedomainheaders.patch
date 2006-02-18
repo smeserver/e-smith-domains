@@ -1,0 +1,26 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-domains-1.3.3/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm mezzanine_patched_e-smith-domains-1.3.3/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm
+--- e-smith-domains-1.3.3/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm	2006-02-19 09:18:37.774950694 +1100
++++ mezzanine_patched_e-smith-domains-1.3.3/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm	2006-02-19 07:40:02.000000000 +1100
+@@ -123,10 +123,18 @@
+        labels => 1,
+ 
+        field_attr => {
+-                       Modify => { link => \&modify_link },
+-                       Remove => { link => \&remove_link, 
+-                                    value => \&remove_value },
+-                     },
++                       Domain => { label =>
++		       $self->localise('DOMAIN_NAME_LABEL') },
++		       Description => { label =>
++		       $self->localise('DESCRIPTION_LABEL') },
++		       Content => { label => $self->localise('CONTENT_LABEL') },
++		       Nameservers => { label => $self->localise('LABEL_NAMESERVERS') },
++		       Modify => { label => $self->localise('MODIFY'),
++		    		 link => \&modify_link },
++		       Remove => { label => $self->localise('REMOVE'),
++		    		 link => \&remove_link,
++				 value => \&remove_value }, 
++                                            },
+            };
+ 
+     my @data = ();
