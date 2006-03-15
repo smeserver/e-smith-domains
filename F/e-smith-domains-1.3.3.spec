@@ -1,17 +1,14 @@
 Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
-%define version 1.3.3
-%define release 06
+%define version 1.4.0
+%define release 01
 Version: %{version}
 Release: %{release}
 License: GPL
 Vendor: Mitel Networks Corporation
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
-Patch0: e-smith-domains-1.3.3-02.mitel_patch
-Patch1: e-smith-domains-1.3.3-03.mitel_patch
-Patch2: e-smith-domains-1.3.3-localisedomainheaders.patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -27,6 +24,8 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
+* Wed Mar 15 2006 Charlie Brady <charlie_brady@mitel.com> 1.4.0-01
+- Roll stable stream version. [SME: 1016]
 
 * Sat Feb 18 2006 Gavin Weight <gweight@gmail.com> 1.3.3-6
 - Table and columns headers not translated. [SME: 809]
@@ -173,9 +172,6 @@ e-smith server and gateway software - domains module.
 
 %prep
 %setup
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
 
 %build
 # Force creation of potentially empty directories
