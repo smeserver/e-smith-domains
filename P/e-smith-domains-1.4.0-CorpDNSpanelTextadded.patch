@@ -1,0 +1,18 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains mezzanine_patched_e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains
+--- e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains	2005-08-26 03:51:33.000000000 +1000
++++ mezzanine_patched_e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains	2006-08-19 22:06:54.000000000 +1000
+@@ -227,7 +227,13 @@
+     <entry>
+         <base>BUTTON_CORPORATE_DNS</base>
+         <trans> <![CDATA[
+-            <a class="button-like"
++        <p>If this server does not have access to the Internet, or you have special
++requirements for DNS resolution, enter the DNS server IP address here.
++
++You should not enter the address of your ISP's DNS servers here, as the server
++is capable of resolving all Internet DNS names without this additional
++configuration </p>
++           <p> <a class="button-like"
+                     href="domains?page=0&page_stack=&Next=Next&wherenext=DOMAINS_PAGE_CORPORATE_DNS">Modify corporate DNS settings</a>
+             ]]>
+         </trans>
