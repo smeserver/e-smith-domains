@@ -2,7 +2,7 @@ Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
 %define version 1.4.0
-%define release 02
+%define release 03
 Version: %{version}
 Release: %{release}
 License: GPL
@@ -10,6 +10,7 @@ Vendor: Mitel Networks Corporation
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-domains-1.4.0-CorpDNSpanelTextadded.patch 
+Patch1: e-smith-domains-1.4.0-CorpDNSpanelTextadded.patch2
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -25,6 +26,9 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
+* Thu Nov 09 2006 Gavin Weight <gweight@gmail.com> 1.4.0-03
+- Missing period at the end of the description. [SME: 1852]
+
 * Sat Aug 19 2006 Gavin Weight <gweight@gmail.com> 1.4.0-02
 - Added Text explaination for Corporate DNS Settings. [SME: 1852]
 
@@ -177,6 +181,7 @@ e-smith server and gateway software - domains module.
 %prep
 %setup
 %patch0 -p1
+%patch1 -p1
 
 %build
 # Force creation of potentially empty directories
