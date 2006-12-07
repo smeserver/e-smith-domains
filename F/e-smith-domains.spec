@@ -2,16 +2,16 @@ Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
 %define version 1.4.0
-%define release 03
+%define release 4
 Version: %{version}
-Release: %{release}
+Release: %smerelease %{release}
+Packager: %{_packager}
 License: GPL
 Vendor: Mitel Networks Corporation
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-domains-1.4.0-CorpDNSpanelTextadded.patch 
 Patch1: e-smith-domains-1.4.0-CorpDNSpanelTextadded.patch2
-Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.13.15-76
@@ -26,6 +26,10 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
+* Thu Dec 07 2006 Shad L. Lords <slords@mail.com>
+- Update to new release naming.  No functional changes.
+- Make Packager generic
+
 * Thu Nov 09 2006 Gavin Weight <gweight@gmail.com> 1.4.0-03
 - Missing period at the end of the description. [SME: 1852]
 
