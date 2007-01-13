@@ -2,7 +2,7 @@ Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
 %define version 1.4.0
-%define release 4
+%define release 5
 Version: %{version}
 Release: %smerelease %{release}
 Packager: %{_packager}
@@ -12,6 +12,7 @@ Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-domains-1.4.0-CorpDNSpanelTextadded.patch 
 Patch1: e-smith-domains-1.4.0-CorpDNSpanelTextadded.patch2
+Patch2: e-smith-domains-1.4.0-novirtual.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.13.15-76
@@ -26,6 +27,9 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
+* Sat Jan 13 2007 Shad L. Lords <slords@mail.com> 1.4.0-5
+- Remove references to virtual from panels [SME: 1517]
+
 * Thu Dec 07 2006 Shad L. Lords <slords@mail.com>
 - Update to new release naming.  No functional changes.
 - Make Packager generic
@@ -186,6 +190,7 @@ e-smith server and gateway software - domains module.
 %setup
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 # Force creation of potentially empty directories
