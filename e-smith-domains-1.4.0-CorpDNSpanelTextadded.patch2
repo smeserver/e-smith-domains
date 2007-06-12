@@ -1,0 +1,12 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains mezzanine_patched_e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains
+--- e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains	2006-11-10 08:47:35.002333763 +1100
++++ mezzanine_patched_e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains	2006-11-10 08:46:15.071255611 +1100
+@@ -232,7 +232,7 @@
+ 
+ You should not enter the address of your ISP's DNS servers here, as the server
+ is capable of resolving all Internet DNS names without this additional
+-configuration </p>
++configuration.</p>
+            <p> <a class="button-like"
+                     href="domains?page=0&page_stack=&Next=Next&wherenext=DOMAINS_PAGE_CORPORATE_DNS">Modify corporate DNS settings</a>
+             ]]>
