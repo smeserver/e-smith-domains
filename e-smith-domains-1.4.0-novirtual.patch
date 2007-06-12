@@ -1,0 +1,100 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains mezzanine_patched_e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains
+--- e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains	2007-01-13 10:34:02.000000000 -0700
++++ mezzanine_patched_e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains	2007-01-13 10:33:22.000000000 -0700
+@@ -17,7 +17,7 @@
+         <base>FORM_DESCRIPTION</base>
+         <trans>
+             <![CDATA[
+-            <p>When you create a virtual domain, your server will be able to
++            <p>When you create a domain, your server will be able to
+                 receive e-mail for that domain and will also be able to host a
+                 web site for that domain.</p>
+             <p><a class="button-like"
+@@ -29,7 +29,7 @@
+     <entry>
+         <base>NO_VIRTUAL_DOMAINS</base>
+         <trans> 
+-            There are no virtual domains in the system.
++            There are no domains in the system.
+         </trans>
+     </entry>
+     <entry>
+@@ -77,7 +77,7 @@
+     <entry>
+         <base>CREATE_TITLE</base>
+         <trans>
+-            Create a new virtual domain
++            Create a new domain
+         </trans>
+     </entry>
+     <entry>
+@@ -136,14 +136,14 @@
+         <base>SYSTEM_DOMAIN_ERROR</base>
+         <trans>
+             Error: domain {$domainName} is your system domain name.  You
+-            cannot have a virtual domain with the same name.  Did not create
++            cannot have a domain with the same name.  Did not create
+             new domain.
+         </trans>
+     </entry>
+     <entry>
+         <base>SUCCESSFULLY_CREATED</base>
+         <trans>
+-            Successfully created virtual domain {$domainName}.  Your web
++            Successfully created domain {$domainName}.  Your web
+             server is now being restarted.  The links on this page will be
+             inactive until the web server restart is complete.
+         </trans>
+@@ -155,7 +155,7 @@
+     <entry>
+         <base>MODIFY_TITLE</base>
+         <trans>
+-            Modify virtual domain
++            Modify domain
+         </trans>
+     </entry>
+     <entry>
+@@ -167,7 +167,7 @@
+     <entry>
+         <base>SUCCESSFULLY_MODIFIED</base>
+         <trans>
+-            Successfully modified virtual domain {$domainName}.  Your web
++            Successfully modified domain {$domainName}.  Your web
+             server is now being restarted.  The links on this page will be
+             inactive until the web server restart is complete.
+         </trans>
+@@ -175,7 +175,7 @@
+     <entry>
+         <base>REMOVE_TITLE</base>
+         <trans>
+-            Remove virtual domain
++            Remove domain
+         </trans>
+     </entry>
+     <entry>
+@@ -183,7 +183,7 @@
+         <trans>
+             <![CDATA[
+             <p>
+-                You are about to remove the virtual domain {$domain}
++                You are about to remove the domain {$domain}
+                 ({$domainDesc}).  
+             </p>
+             <p>
+@@ -195,14 +195,14 @@
+     <entry>
+         <base>ERROR_WHILE_REMOVING_DOMAIN</base>
+         <trans>
+-            Error: internal failure while removing virtual domain
++            Error: internal failure while removing domain
+             {$domain}.
+         </trans>
+     </entry>
+     <entry>
+         <base>SUCCESSFULLY_DELETED</base>
+         <trans>
+-            Successfully deleted virtual domain {$domain}.  Your web server
++            Successfully deleted domain {$domain}.  Your web server
+             is now being restarted.  The links on this page will be inactive
+             until the web server restart is complete.
+         </trans>
