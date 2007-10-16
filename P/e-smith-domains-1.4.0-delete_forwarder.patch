@@ -1,0 +1,20 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-domains-1.4.0/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm mezzanine_patched_e-smith-domains-1.4.0/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm
+--- e-smith-domains-1.4.0/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm	2006-03-15 16:33:24.000000000 -0500
++++ mezzanine_patched_e-smith-domains-1.4.0/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm	2007-10-16 16:45:33.000000000 -0400
+@@ -310,8 +310,14 @@
+     ($forwarder, $forwarder2) = ($forwarder2, '')
+         if ($forwarder2 and not $forwarder);
+ 
+-    $db->set_prop('dnscache', 'Forwarder', $forwarder);
+-    $db->set_prop('dnscache', 'Forwarder2', $forwarder2);
++    if ($forwarder)
++	$db->set_prop('dnscache', 'Forwarder', $forwarder);
++    else
++	$db->delete_prop('dnscache', 'Forwarder');
++    if ($forwarder2)
++	$db->set_prop('dnscache', 'Forwarder2', $forwarder2);
++    else
++	$db->delete_prop('dnscache', 'Forwarder2');
+ 
+     unless ( system( "/sbin/e-smith/signal-event", "dns-update" ) == 0 )
+     {
