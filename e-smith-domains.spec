@@ -2,7 +2,7 @@ Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
 %define version 1.4.0
-%define release 6
+%define release 7
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -12,6 +12,7 @@ Patch0: e-smith-domains-1.4.0-CorpDNSpanelTextadded.patch
 Patch1: e-smith-domains-1.4.0-CorpDNSpanelTextadded.patch2
 Patch2: e-smith-domains-1.4.0-novirtual.patch
 Patch3: e-smith-domains-1.4.0-delete_forwarder.patch
+Patch4: e-smith-domains-1.4.0-delete_forwarder.patch2
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.13.15-76
@@ -26,6 +27,9 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
+* Sat Oct 20 2007 Charlie Brady <charlie_brady@mitel.com> 1.4.0-7
+- Add missing braces in last patch. [SME: 3415]
+
 * Tue Oct 16 2007 Charlie Brady <charlie_brady@mitel.com> 1.4.0-6
 - Allow Corporate DNS settings to be removed via panel. [SME: 3415]
 
@@ -197,6 +201,7 @@ e-smith server and gateway software - domains module.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 # Force creation of potentially empty directories
