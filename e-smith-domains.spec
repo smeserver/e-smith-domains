@@ -2,7 +2,7 @@ Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
 %define version 1.4.0
-%define release 8
+%define release 9
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -14,10 +14,12 @@ Patch2: e-smith-domains-1.4.0-novirtual.patch
 Patch3: e-smith-domains-1.4.0-delete_forwarder.patch
 Patch4: e-smith-domains-1.4.0-delete_forwarder.patch2
 Patch5: e-smith-domains-1.4.0-delete_forwarder.patch3
+Patch6: e-smith-domains-1.4.0-tags2general.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.13.15-76
 Requires: perl(HTML::Tabulate) >= 0.23
+Requires: e-smith-formmagick >= 1.4.0-9
 BuildRequires: perl(Test::Inline) >= 0.12
 BuildRequires: perl
 BuildRequires: e-smith-devtools >= 1.11.0-03
@@ -28,6 +30,9 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
+* Wed Feb 13 2008 Stephen Noble <support@dungog.net> 1.4.0-9
+- Remove <base> tags now in general [SME: 3926]
+
 * Fri Oct 26 2007 Charlie Brady <charlie_brady@mitel.com> 1.4.0-8
 - Fix removal of Corporate DNS setting (take III). [SME: 3415]
 
@@ -207,6 +212,7 @@ e-smith server and gateway software - domains module.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 # Force creation of potentially empty directories

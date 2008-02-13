@@ -1,0 +1,57 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains mezzanine_patched_e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains
+--- e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains	2008-02-13 22:10:18.000000000 +1100
++++ mezzanine_patched_e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains	2008-02-13 22:09:18.000000000 +1100
+@@ -8,12 +8,6 @@
+         </trans>
+     </entry>
+     <entry>
+-        <base>OPERATION_STATUS_REPORT</base>
+-        <trans>
+-            Operation status report
+-        </trans>
+-    </entry>
+-    <entry>
+         <base>FORM_DESCRIPTION</base>
+         <trans>
+             <![CDATA[
+@@ -63,18 +57,6 @@
+         </trans>
+     </entry>
+     <entry>
+-        <base>MODIFY</base>
+-        <trans>Modify</trans>
+-    </entry>
+-    <entry>
+-        <base>SAVE</base>
+-        <trans>Save</trans>
+-    </entry>
+-    <entry>
+-        <base>REMOVE</base>
+-        <trans>Remove</trans>
+-    </entry>
+-    <entry>
+         <base>CREATE_TITLE</base>
+         <trans>
+             Create a new domain
+@@ -149,10 +131,6 @@
+         </trans>
+     </entry>
+     <entry>
+-        <base>ACTION</base>
+-        <trans>Action</trans>
+-    </entry>
+-    <entry>
+         <base>MODIFY_TITLE</base>
+         <trans>
+             Modify domain
+@@ -208,10 +186,6 @@
+         </trans>
+     </entry>
+     <entry>
+-        <base>Configuration</base>
+-        <trans>Configuration</trans>
+-    </entry>
+-    <entry>
+         <base>Domains</base>
+         <trans>Domains</trans>
+     </entry>
