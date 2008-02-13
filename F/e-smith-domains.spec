@@ -14,7 +14,7 @@ Patch2: e-smith-domains-1.4.0-novirtual.patch
 Patch3: e-smith-domains-1.4.0-delete_forwarder.patch
 Patch4: e-smith-domains-1.4.0-delete_forwarder.patch2
 Patch5: e-smith-domains-1.4.0-delete_forwarder.patch3
-Patch5: e-smith-domains-1.4.0-tags2general.patch
+Patch6: e-smith-domains-1.4.0-tags2general.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.13.15-76
