@@ -2,7 +2,7 @@ Summary: e-smith server and gateway - domains module
 %define name e-smith-domains
 Name: %{name}
 %define version 1.4.0
-%define release 9
+%define release 10
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -15,6 +15,7 @@ Patch3: e-smith-domains-1.4.0-delete_forwarder.patch
 Patch4: e-smith-domains-1.4.0-delete_forwarder.patch2
 Patch5: e-smith-domains-1.4.0-delete_forwarder.patch3
 Patch6: e-smith-domains-1.4.0-tags2general.patch
+Patch7: e-smith-domains-1.4.0-fixADD.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.13.15-76
@@ -30,6 +31,9 @@ AutoReqProv: no
 e-smith server and gateway software - domains module.
 
 %changelog
+* Wed Mar 12 2008 Shad L. Lords <slords@mail.com> 1.4.0-10
+- Cleanup CREATE/ADD tag mixup [SME: 4045]
+
 * Wed Feb 13 2008 Stephen Noble <support@dungog.net> 1.4.0-9
 - Remove <base> tags now in general [SME: 3926]
 
@@ -213,6 +217,7 @@ e-smith server and gateway software - domains module.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 # Force creation of potentially empty directories
