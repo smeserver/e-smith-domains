@@ -82,3 +82,8 @@ Wed Mar 12 09:26:58 2008                        Shad L. Lords (slords)
 
 See Changelog
 ----------------------------------------------------------------------
+Sun Apr 27 00:31:36 2008                   Jonathan Martens (jonathan)
+
+* Sun Apr 27 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.2.0-23
+- Add common <base> tags to e-smith-formmagick's general
+----------------------------------------------------------------------
