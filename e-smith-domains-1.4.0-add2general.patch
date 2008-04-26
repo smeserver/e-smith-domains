@@ -1,0 +1,140 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains mezzanine_patched_e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains
+--- e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains	2008-04-27 00:29:49.000000000 +0200
++++ mezzanine_patched_e-smith-domains-1.4.0/root/etc/e-smith/locale/en-us/etc/e-smith/web/functions/domains	2008-04-27 00:22:44.000000000 +0200
+@@ -33,18 +33,6 @@
+         </trans>
+     </entry>
+     <entry>
+-        <base>DOMAIN</base>
+-        <trans>
+-            Domain
+-        </trans>
+-    </entry>
+-    <entry>
+-        <base>DESCRIPTION</base>
+-        <trans>
+-            Description
+-        </trans>
+-    </entry>
+-    <entry>
+         <base>PRIMARY_SITE</base>
+         <trans>
+             primary site
+@@ -63,18 +51,6 @@
+         </trans>
+     </entry>
+     <entry>
+-        <base>DOMAIN_NAME_LABEL</base>
+-        <trans>
+-            Domain name
+-        </trans>
+-    </entry>
+-    <entry>
+-        <base>DESCRIPTION_LABEL</base>
+-        <trans>
+-            Brief description
+-        </trans>
+-    </entry>
+-    <entry>
+         <base>CONTENT_FIELD_DESCRIPTION</base>
+         <trans>
+             For the web site, you may choose your primary web site or any
+@@ -82,12 +58,6 @@
+         </trans>
+     </entry>
+     <entry>
+-        <base>CONTENT_LABEL</base>
+-        <trans>
+-            Content
+-        </trans>
+-    </entry>
+-    <entry>
+         <base>DOMAIN_NAME_VALIDATION_ERROR</base>
+         <trans>
+             Error: unexpected or missing characters in domain name
+@@ -181,10 +151,6 @@
+             until the web server restart is complete.
+         </trans>
+     </entry>
+-    <entry>
+-        <base>Domains</base>
+-        <trans>Domains</trans>
+-    </entry>
+ 
+     <entry>
+         <base>DESC_CORPORATE_DNS_CURRENT</base>
+diff -Nur -x '*.orig' -x '*.rej' e-smith-domains-1.4.0/root/etc/e-smith/web/functions/domains mezzanine_patched_e-smith-domains-1.4.0/root/etc/e-smith/web/functions/domains
+--- e-smith-domains-1.4.0/root/etc/e-smith/web/functions/domains	2008-04-27 00:29:49.000000000 +0200
++++ mezzanine_patched_e-smith-domains-1.4.0/root/etc/e-smith/web/functions/domains	2008-04-27 00:28:04.000000000 +0200
+@@ -3,7 +3,7 @@
+ # vim: ts=4 sw=4 et:
+ #----------------------------------------------------------------------
+ # heading     : Configuration
+-# description : Domains
++# description : DOMAINS
+ # navigation  : 6000 6600
+ #----------------------------------------------------------------------
+ #----------------------------------------------------------------------
+@@ -91,18 +91,18 @@
+         <description>CREATE_TITLE</description>
+ 
+         <field type="text" id="Domain" validation="validate_Domain">
+-            <label>DOMAIN_NAME_LABEL</label>
++            <label>DOMAIN_NAME</label>
+         </field>
+ 
+         <field type="text" id="Description" validation="nonblank">
+-            <label>DESCRIPTION_LABEL</label>
++            <label>DESCRIPTION_BRIEF</label>
+         </field>
+ 
+         <field type="select" id="Content"
+                 options="get_content_options()"
+                 value="get_content_value()">
+ 
+-            <label>CONTENT_LABEL</label>
++            <label>CONTENT</label>
+             <description>CONTENT_FIELD_DESCRIPTION</description>
+         </field>
+ 
+@@ -124,20 +124,20 @@
+         <description>MODIFY_TITLE</description>
+ 
+         <field type="literal" id="Domain" >
+-            <label>DOMAIN_NAME_LABEL</label>
++            <label>DOMAIN_NAME</label>
+         </field>
+ 
+         <field type="text" id="Description" 
+             value="get_description_value()"
+             validation="nonblank">
+-            <label>DESCRIPTION_LABEL</label>
++            <label>DESCRIPTION_BRIEF</label>
+         </field>
+ 
+         <field type="select" id="Content"
+                 options="get_content_options()"
+                 value="get_content_value()">
+ 
+-            <label>CONTENT_LABEL</label>
++            <label>CONTENT</label>
+             <description>CONTENT_FIELD_DESCRIPTION</description>
+         </field>
+ 
+diff -Nur -x '*.orig' -x '*.rej' e-smith-domains-1.4.0/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm mezzanine_patched_e-smith-domains-1.4.0/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm
+--- e-smith-domains-1.4.0/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm	2008-04-27 00:29:49.000000000 +0200
++++ mezzanine_patched_e-smith-domains-1.4.0/root/usr/lib/perl5/site_perl/esmith/FormMagick/Panel/domains.pm	2008-04-27 00:27:02.000000000 +0200
+@@ -124,10 +124,10 @@
+ 
+        field_attr => {
+                        Domain => { label =>
+-		       $self->localise('DOMAIN_NAME_LABEL') },
++		       $self->localise('DOMAIN_NAME') },
+ 		       Description => { label =>
+-		       $self->localise('DESCRIPTION_LABEL') },
+-		       Content => { label => $self->localise('CONTENT_LABEL') },
++		       $self->localise('DESCRIPTION_BRIEF') },
++		       Content => { label => $self->localise('CONTENT') },
+ 		       Nameservers => { label => $self->localise('LABEL_NAMESERVERS') },
+ 		       Modify => { label => $self->localise('MODIFY'),
+ 		    		 link => \&modify_link },
