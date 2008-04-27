@@ -33,7 +33,7 @@ e-smith server and gateway software - domains module.
 
 %changelog
 * Sun Apr 27 2008 Jonathan Martens <smeserver-contribs@snetram.nl> 1.4.0-11
-- Add common <base> tags to e-smith-formmagick's general
+- Add common <base> tags to e-smith-formmagick's general [SME: 4287]
 
 * Wed Mar 12 2008 Shad L. Lords <slords@mail.com> 1.4.0-10
 - Cleanup CREATE/ADD tag mixup [SME: 4045]
