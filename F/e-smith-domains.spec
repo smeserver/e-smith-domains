@@ -21,7 +21,7 @@ BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.13.15-76
 Requires: perl(HTML::Tabulate) >= 0.23
-Requires: e-smith-formmagick >= 1.4.0-9
+Requires: e-smith-formmagick >= 1.4.0-12
 BuildRequires: perl(Test::Inline) >= 0.12
 BuildRequires: perl
 BuildRequires: e-smith-devtools >= 1.11.0-03
